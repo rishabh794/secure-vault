@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext'; 
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const router = useRouter();
+    const { login } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,7 +25,7 @@ export default function LoginPage() {
 
         if (res.ok) {
             setMessage('Login successful! You can now access your vault.');
-            sessionStorage.setItem('token', data.token);
+            login(data.token); 
             router.push('/dashboard');
         } else {
             setMessage(data.message || 'An error occurred.');
