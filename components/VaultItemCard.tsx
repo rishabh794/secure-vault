@@ -2,7 +2,6 @@
 
 import toast from 'react-hot-toast';
 
-// Define the type for the decrypted data
 type VaultItem = {
     title: string;
     username: string;
@@ -12,10 +11,32 @@ type VaultItem = {
 };
 
 interface VaultItemCardProps {
-    decryptedData: VaultItem | null; // Can be null if not decrypted
+    decryptedData: VaultItem | null;
+    itemId: string;
+    onDeleted: () => void; 
 }
 
-export function VaultItemCard({ decryptedData }: VaultItemCardProps) {
+export function VaultItemCard({ decryptedData, itemId, onDeleted }: VaultItemCardProps) {
+
+    const handleDelete = async () => {
+        if (!window.confirm("Are you sure you want to delete this item?")) {
+            return;
+        }
+
+        const token = sessionStorage.getItem('token');
+        const res = await fetch(`/api/vault/${itemId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            toast.success("Item deleted successfully!");
+            onDeleted(); // Tell the parent dashboard to refresh
+        } else {
+            toast.error("Failed to delete item.");
+        }
+    };
+    
     const handleCopy = (text: string, fieldName: string) => {
         if (!text) return;
         navigator.clipboard.writeText(text);
@@ -26,6 +47,7 @@ export function VaultItemCard({ decryptedData }: VaultItemCardProps) {
     return (
         <div className="bg-gray-800 rounded-lg shadow-md p-4">
             <h3 className="font-bold text-lg mb-2">{decryptedData?.title || 'Encrypted Title'}</h3>
+            <button onClick={handleDelete} className="text-sm text-red-400 hover:underline">Delete</button>
             
             <div className="flex items-center justify-between mb-1">
                 <p className="text-gray-400 truncate">

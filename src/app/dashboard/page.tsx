@@ -87,7 +87,9 @@ export default function DashboardPage() {
                         {items.length > 0 ? items.map(item => (
                             <VaultItemCard 
                                 key={item._id}
+                                itemId={item._id}
                                 decryptedData={decryptedItems[item._id] || null} 
+                                onDeleted={fetchItems}
                             />
                         )) : <p className="text-gray-500">Your vault is empty. Add an item to get started.</p>}
                     </div>
