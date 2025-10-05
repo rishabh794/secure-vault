@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { encryptData, decryptData } from '@/lib/crypto';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 
 type VaultItem = {
     title: string;
@@ -20,6 +21,8 @@ export default function DashboardPage() {
     const [title, setTitle] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [url , setUrl] = useState('');
+    const [notes, setNotes] = useState('');
 
     const fetchItems = async () => {
         const token = sessionStorage.getItem('token');
@@ -69,7 +72,7 @@ export default function DashboardPage() {
         }
 
         const token = sessionStorage.getItem('token');
-        const newItem: VaultItem = { title, username, password };
+        const newItem: VaultItem = { title, username, password , url , notes };
         const encryptedData = encryptData(newItem, masterPassword);
 
         const res = await fetch('/api/vault', {
@@ -83,7 +86,7 @@ export default function DashboardPage() {
         
         if(res.ok) {
             setMessage("Item added successfully!");
-            setTitle(''); setUsername(''); setPassword('');
+            setTitle(''); setUsername(''); setPassword(''); setUrl(''); setNotes('');
             fetchItems(); 
         } else {
             setMessage("Failed to add item.");
@@ -91,7 +94,7 @@ export default function DashboardPage() {
     };
 
     return (
-        <div>
+        <ProtectedRoute>
             <h1>Dashboard</h1>
             <p>Enter your Master Password to decrypt your vault.</p>
             <input
@@ -108,6 +111,9 @@ export default function DashboardPage() {
                 <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Title" required />
                 <input value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" required />
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required />
+                <input value={url} onChange={e => setUrl(e.target.value)} placeholder="url" />
+                <input value={notes} onChange={e => setNotes(e.target.value)} placeholder="notes" />
+
                 <button type="submit">Add Item</button>
             </form>
             <hr />
@@ -125,10 +131,15 @@ export default function DashboardPage() {
                         <br />
                         <strong>Password: </strong>
                         {decryptedItems[item._id]?.password || 'Encrypted'}
+                        <br />
+                        <strong>URL: </strong>
+                        {decryptedItems[item._id]?.url || 'Encrypted'}
+                        <br />
+                        <strong>Notes: </strong>
+                        {decryptedItems[item._id]?.notes || 'Encrypted'}
                     </li>
                 ))}
             </ul>
-
-        </div>
+        </ProtectedRoute>
     );
 }
