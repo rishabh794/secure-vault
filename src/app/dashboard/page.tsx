@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { encryptData, decryptData } from '@/lib/crypto';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import toast from 'react-hot-toast';
 
 type VaultItem = {
     title: string;
@@ -16,7 +17,6 @@ export default function DashboardPage() {
     const [items, setItems] = useState<Array<{ _id: string; encryptedData: string }>>([]);
     const [decryptedItems, setDecryptedItems] = useState<Record<string, VaultItem>>({});
     const [masterPassword, setMasterPassword] = useState('');
-    const [message, setMessage] = useState('');
 
     const [title, setTitle] = useState('');
     const [username, setUsername] = useState('');
@@ -27,7 +27,7 @@ export default function DashboardPage() {
     const fetchItems = async () => {
         const token = sessionStorage.getItem('token');
         if (!token) {
-            setMessage("You are not logged in.");
+            toast.error("You are not logged in.");
             return;
         }
 
@@ -39,7 +39,7 @@ export default function DashboardPage() {
             const data = await res.json();
             setItems(data.items || []);
         } else {
-            setMessage("Failed to fetch items.");
+            toast.error("Failed to fetch items.");
         }
     };
 
@@ -58,9 +58,9 @@ export default function DashboardPage() {
                 decrypted[item._id] = decryptData(item.encryptedData, masterPassword) as VaultItem;
             });
             setDecryptedItems(decrypted);
-            setMessage("Vault unlocked!");
+            toast.success("Vault unlocked!");
         } catch {
-            setMessage("Decryption failed. Check your master password.");
+            toast.error("Decryption failed. Check your master password.");
         }
     };
     
@@ -85,61 +85,60 @@ export default function DashboardPage() {
         });
         
         if(res.ok) {
-            setMessage("Item added successfully!");
+            toast.success("Item added successfully!");
             setTitle(''); setUsername(''); setPassword(''); setUrl(''); setNotes('');
             fetchItems(); 
         } else {
-            setMessage("Failed to add item.");
+            toast.error("Failed to add item.");
         }
     };
 
     return (
         <ProtectedRoute>
-            <h1>Dashboard</h1>
-            <p>Enter your Master Password to decrypt your vault.</p>
-            <input
-                type="password"
-                placeholder="Master Password"
-                value={masterPassword}
-                onChange={(e) => setMasterPassword(e.target.value)}
-            />
-            <button onClick={handleDecryptAll}>Unlock Vault</button>
-            <hr />
+            <div className="bg-gray-900 text-white min-h-screen p-4 md:p-8">
+                <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
-            <h2>Add New Item</h2>
-            <form onSubmit={handleAddItem}>
-                <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Title" required />
-                <input value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" required />
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required />
-                <input value={url} onChange={e => setUrl(e.target.value)} placeholder="url" />
-                <input value={notes} onChange={e => setNotes(e.target.value)} placeholder="notes" />
+                <div className="bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+                    <h2 className="text-xl font-semibold mb-4">Unlock Your Vault</h2>
+                    <div className="flex items-center space-x-4">
+                        <input
+                            type="password"
+                            placeholder="Enter Your Master Password"
+                            value={masterPassword}
+                            onChange={(e) => setMasterPassword(e.target.value)}
+                            className="flex-grow px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button onClick={handleDecryptAll} className="px-4 py-2 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700">Unlock Vault</button>
+                    </div>
+                </div>
 
-                <button type="submit">Add Item</button>
-            </form>
-            <hr />
-            
-            <h2>Your Vault Items</h2>
-            {message && <p><strong>{message}</strong></p>}
-            <ul>
-                {items.map(item => (
-                    <li key={item._id} style={{ marginBottom: '10px', border: '1px solid #ccc', padding: '5px' }}>
-                        <strong>Title: </strong>
-                        {decryptedItems[item._id]?.title || 'Encrypted'}
-                        <br />
-                        <strong>Username: </strong>
-                        {decryptedItems[item._id]?.username || 'Encrypted'}
-                        <br />
-                        <strong>Password: </strong>
-                        {decryptedItems[item._id]?.password || 'Encrypted'}
-                        <br />
-                        <strong>URL: </strong>
-                        {decryptedItems[item._id]?.url || 'Encrypted'}
-                        <br />
-                        <strong>Notes: </strong>
-                        {decryptedItems[item._id]?.notes || 'Encrypted'}
-                    </li>
-                ))}
-            </ul>
+                <div className="bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+                    <h2 className="text-xl font-semibold mb-4">Add New Item</h2>
+                    <form onSubmit={handleAddItem} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Title" required className="px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"/>
+                        <input value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" required className="px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"/>
+                        <input type="text" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required className="px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"/>
+                        <input value={url} onChange={e => setUrl(e.target.value)} placeholder="URL (optional)" className="px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"/>
+                        <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes (optional)" className="md:col-span-2 px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md h-24"></textarea>
+                        <button type="submit" className="md:col-span-2 w-full px-4 py-2 font-bold text-white bg-green-600 rounded-md hover:bg-green-700">Add Item</button>
+                    </form>
+                </div>
+
+                <div>
+                    <h2 className="text-xl font-semibold mb-4">Your Vault Items</h2>
+                    <div className="space-y-4">
+                        {items.length > 0 ? items.map(item => (
+                            <div key={item._id} className="bg-gray-800 rounded-lg shadow-md p-4">
+                                <h3 className="font-bold text-lg">{decryptedItems[item._id]?.title || 'Encrypted Title'}</h3>
+                                <p className="text-gray-400"><strong>Username:</strong> {decryptedItems[item._id]?.username || 'Encrypted'}</p>
+                                <p className="text-gray-400"><strong>Password:</strong> {decryptedItems[item._id]?.password || 'Encrypted'}</p>
+                                {decryptedItems[item._id]?.url && <p className="text-gray-400"><strong>URL:</strong> {decryptedItems[item._id]?.url}</p>}
+                                {decryptedItems[item._id]?.notes && <p className="text-gray-400 mt-2"><strong>Notes:</strong> {decryptedItems[item._id]?.notes}</p>}
+                            </div>
+                        )) : <p className="text-gray-500">Your vault is empty. Add an item to get started.</p>}
+                    </div>
+                </div>
+            </div>
         </ProtectedRoute>
     );
 }
