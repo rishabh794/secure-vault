@@ -23,7 +23,8 @@ export default function LoginPage() {
 
         if (res.ok) {
             setMessage('Login successful! You can now access your vault.');
-            console.log('Received Token:', data.token);
+            sessionStorage.setItem('token', data.token);
+            router.push('/dashboard');
         } else {
             setMessage(data.message || 'An error occurred.');
         }
