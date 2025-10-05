@@ -12,11 +12,12 @@ type VaultItem = {
 
 interface VaultItemCardProps {
     decryptedData: VaultItem | null;
-    itemId: string;
-    onDeleted: () => void; 
+    item: { _id: string; encryptedData: string }; 
+    onDeleted: (id: string) => void;
+    onEdit: () => void; 
 }
 
-export function VaultItemCard({ decryptedData, itemId, onDeleted }: VaultItemCardProps) {
+export function VaultItemCard({ decryptedData, item, onDeleted , onEdit}: VaultItemCardProps) {
 
     const handleDelete = async () => {
         if (!window.confirm("Are you sure you want to delete this item?")) {
@@ -24,19 +25,19 @@ export function VaultItemCard({ decryptedData, itemId, onDeleted }: VaultItemCar
         }
 
         const token = sessionStorage.getItem('token');
-        const res = await fetch(`/api/vault/${itemId}`, {
+        const res = await fetch(`/api/vault/${item._id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (res.ok) {
             toast.success("Item deleted successfully!");
-            onDeleted(); // Tell the parent dashboard to refresh
+            onDeleted(item._id); 
         } else {
             toast.error("Failed to delete item.");
         }
     };
-    
+
     const handleCopy = (text: string, fieldName: string) => {
         if (!text) return;
         navigator.clipboard.writeText(text);
@@ -47,6 +48,7 @@ export function VaultItemCard({ decryptedData, itemId, onDeleted }: VaultItemCar
     return (
         <div className="bg-gray-800 rounded-lg shadow-md p-4">
             <h3 className="font-bold text-lg mb-2">{decryptedData?.title || 'Encrypted Title'}</h3>
+            <button onClick={onEdit} className="text-sm text-blue-400 hover:underline">Edit</button>
             <button onClick={handleDelete} className="text-sm text-red-400 hover:underline">Delete</button>
             
             <div className="flex items-center justify-between mb-1">

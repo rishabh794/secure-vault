@@ -6,6 +6,7 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import toast from 'react-hot-toast';
 import { AddItemForm } from '@/components/AddItemForm'
 import { VaultItemCard } from '@/components/VaultItemCard';
+import { EditModal } from '@/components/EditModal';
 
 type VaultItem = {
     title: string;
@@ -19,6 +20,7 @@ export default function DashboardPage() {
     const [items, setItems] = useState<Array<{ _id: string; encryptedData: string }>>([]);
     const [decryptedItems, setDecryptedItems] = useState<Record<string, VaultItem>>({});
     const [masterPassword, setMasterPassword] = useState('');
+    const [editingItem, setEditingItem] = useState<{ _id: string; encryptedData: string } | null>(null);
 
     const fetchItems = async () => {
         const token = sessionStorage.getItem('token');
@@ -87,13 +89,22 @@ export default function DashboardPage() {
                         {items.length > 0 ? items.map(item => (
                             <VaultItemCard 
                                 key={item._id}
-                                itemId={item._id}
+                                item={item}
                                 decryptedData={decryptedItems[item._id] || null} 
                                 onDeleted={fetchItems}
+                                onEdit={() => setEditingItem(item)}
                             />
                         )) : <p className="text-gray-500">Your vault is empty. Add an item to get started.</p>}
                     </div>
                 </div>
+                  {editingItem && (
+                    <EditModal 
+                        item={editingItem}
+                        masterPassword={masterPassword}
+                        onClose={() => setEditingItem(null)}
+                        onSave={fetchItems}
+                    />
+                )}
             </div>
         </ProtectedRoute>
     );
