@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { encryptData, decryptData } from '@/lib/crypto';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import toast from 'react-hot-toast';
+import { PasswordGenerator } from '@/components/PasswordGenerator';
 
 type VaultItem = {
     title: string;
@@ -17,6 +18,7 @@ export default function DashboardPage() {
     const [items, setItems] = useState<Array<{ _id: string; encryptedData: string }>>([]);
     const [decryptedItems, setDecryptedItems] = useState<Record<string, VaultItem>>({});
     const [masterPassword, setMasterPassword] = useState('');
+    const [showGenerator, setShowGenerator] = useState(false);
 
     const [title, setTitle] = useState('');
     const [username, setUsername] = useState('');
@@ -117,9 +119,33 @@ export default function DashboardPage() {
                     <form onSubmit={handleAddItem} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Title" required className="px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"/>
                         <input value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" required className="px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"/>
-                        <input type="text" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required className="px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"/>
+                        <div className="flex items-center space-x-2">
+                            <input 
+                                type="text" 
+                                value={password} 
+                                onChange={e => setPassword(e.target.value)} 
+                                placeholder="Password" 
+                                required 
+                                className="flex-grow px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"
+                            />
+                            <button 
+                                type="button" 
+                                onClick={() => setShowGenerator(!showGenerator)} 
+                                className="px-4 py-2 font-semibold text-white bg-gray-600 rounded-md hover:bg-gray-500"
+                            >
+                                Generate
+                            </button>
+                        </div>
                         <input value={url} onChange={e => setUrl(e.target.value)} placeholder="URL (optional)" className="px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"/>
                         <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes (optional)" className="md:col-span-2 px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md h-24"></textarea>
+                        {showGenerator && (
+                            <div className="md:col-span-2">
+                                <PasswordGenerator onPasswordGenerated={(newPassword) => {
+                                    setPassword(newPassword);
+                                    setShowGenerator(false); 
+                                }} />
+                            </div>
+                        )}
                         <button type="submit" className="md:col-span-2 w-full px-4 py-2 font-bold text-white bg-green-600 rounded-md hover:bg-green-700">Add Item</button>
                     </form>
                 </div>
