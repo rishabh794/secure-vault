@@ -21,7 +21,7 @@ export function PasswordGenerator({ onPasswordGenerated }: PasswordGeneratorProp
         const numbers = '0123456789';
         const symbols = '!@#$%^&*()_+~`|}{[]:;?><,./-=';
         
-        let allChars = lower;
+        let allChars = '';
         if (includeLowerCase) allChars += lower;
         if (includeUppercase) allChars += upper;
         if (includeNumbers) allChars += numbers;
