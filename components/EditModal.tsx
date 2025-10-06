@@ -21,11 +21,6 @@ export function EditModal({ item, masterPassword, onClose, onSave }: EditModalPr
     const [notes, setNotes] = useState('');
 
     useEffect(() => {
-        if (!masterPassword) {
-            toast.error("Please enter your master password to edit items.");
-            onClose();
-            return; 
-        }
         try {
             const decrypted = decryptData(item.encryptedData, masterPassword) as VaultItem;
             setTitle(decrypted.title);

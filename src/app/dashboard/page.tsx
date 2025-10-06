@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect , useMemo } from 'react';
 import { decryptData } from '@/lib/crypto';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import toast from 'react-hot-toast';
 import { AddItemForm } from '@/components/AddItemForm'
 import { VaultItemCard } from '@/components/VaultItemCard';
 import { EditModal } from '@/components/EditModal';
+import { SearchInput } from '@/components/SearchInput';
 
 type VaultItem = {
     title: string;
@@ -21,6 +22,7 @@ export default function DashboardPage() {
     const [decryptedItems, setDecryptedItems] = useState<Record<string, VaultItem>>({});
     const [masterPassword, setMasterPassword] = useState('');
     const [editingItem, setEditingItem] = useState<{ _id: string; encryptedData: string } | null>(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const fetchItems = async () => {
         const token = sessionStorage.getItem('token');
@@ -61,6 +63,32 @@ export default function DashboardPage() {
             toast.error("Decryption failed. Check your master password.");
         }
     };
+
+     const handleEditClick = (item: { _id: string; encryptedData: string }) => {
+        if (!masterPassword) {
+            toast.error("Please enter your master password first.");
+            return;
+        }
+        setEditingItem(item);
+    };
+
+     const filteredItems = useMemo(() => {
+        if (Object.keys(decryptedItems).length === 0 || !searchTerm) {
+            return items;
+        }
+
+        return items.filter(item => {
+            const decrypted = decryptedItems[item._id];
+            if (!decrypted) return false;
+
+            const searchTermLower = searchTerm.toLowerCase();
+            const titleLower = decrypted.title.toLowerCase();
+            const usernameLower = decrypted.username.toLowerCase();
+
+            return titleLower.includes(searchTermLower) || usernameLower.includes(searchTermLower);
+        });
+    }, [searchTerm, items, decryptedItems]);
+
     
     return (
         <ProtectedRoute>
@@ -82,19 +110,24 @@ export default function DashboardPage() {
                 </div>
 
                 <AddItemForm masterPassword={masterPassword} onItemAdded={fetchItems} />
+                <SearchInput searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
                 <div>
                     <h2 className="text-xl font-semibold mb-4">Your Vault Items</h2>
                     <div className="space-y-4">
-                        {items.length > 0 ? items.map(item => (
-                            <VaultItemCard 
-                                key={item._id}
-                                item={item}
-                                decryptedData={decryptedItems[item._id] || null} 
-                                onDeleted={fetchItems}
-                                onEdit={() => setEditingItem(item)}
-                            />
-                        )) : <p className="text-gray-500">Your vault is empty. Add an item to get started.</p>}
+                        {filteredItems.length > 0 ? (
+                            filteredItems.map(item => (
+                                <VaultItemCard 
+                                    key={item._id}
+                                    item={item}
+                                    decryptedData={decryptedItems[item._id] || null} 
+                                    onDeleted={fetchItems}
+                                    onEdit={() => handleEditClick(item)}
+                                />
+                            ))
+                        ) : (
+                            <p className="text-gray-500">Your vault is empty. Add an item to get started.</p>
+                        )}
                     </div>
                 </div>
                   {editingItem && (

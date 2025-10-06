@@ -48,7 +48,7 @@ export function VaultItemCard({ decryptedData, item, onDeleted , onEdit}: VaultI
     return (
         <div className="bg-gray-800 rounded-lg shadow-md p-4">
             <h3 className="font-bold text-lg mb-2">{decryptedData?.title || 'Encrypted Title'}</h3>
-            <button onClick={onEdit} className="text-sm text-blue-400 hover:underline">Edit</button>
+            <button onClick={onEdit} className="text-sm text-blue-400 hover:underline pr-2">Edit</button>
             <button onClick={handleDelete} className="text-sm text-red-400 hover:underline">Delete</button>
             
             <div className="flex items-center justify-between mb-1">
