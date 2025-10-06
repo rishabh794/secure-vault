@@ -27,8 +27,8 @@ export function Header() {
                                 Dashboard
                             </Link>
 
-                            <Link href="/settings/security" className="mr-4 hover:text-gray-300">
-                                Security
+                            <Link href="/settings" className="mr-4 hover:text-gray-300">
+                                Settings
                             </Link>
                             
                             <button onClick={handleLogout} className="hover:text-gray-300">
