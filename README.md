@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🔒 SecureVault - A Zero-Knowledge Password Manager
 
-## Getting Started
+A fully-featured, privacy-first password manager built with Next.js and MongoDB. All data is encrypted and decrypted on the client-side, meaning the server never has access to your plaintext secrets.
 
-First, run the development server:
+**Live Demo:** [Link to my deployed app will go here]
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+![Screenshot of the SecureVault Dashboard](<img width="2490" height="3048" alt="localhost_3000_dashboard" src="https://github.com/user-attachments/assets/d0738347-e1f0-49aa-9159-e493c6a2a000" />
+)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [x] **Zero-Knowledge Architecture:** All encryption/decryption happens in the browser.
+- [x] **Strong User Authentication:** Secure registration and login with JWT sessions.
+- [x] **Full CRUD Functionality:** Create, view, edit, and delete secure vault items.
+- [x] **Password Generator:** Create strong, unique passwords with customizable options.
+- [x] **Secure Copy:** Copy credentials to the clipboard with an automatic 15-second clear.
+- [x] **Real-time Search & Filtering:** Instantly search by text and filter by tags.
+- [x] **Tags System:** Organize your vault items with flexible, multi-word tags.
+- [x] **2FA Setup:** Users can enable Time-based One-Time Password (TOTP) for their accounts.
+- [x] **Encrypted Export/Import:** Securely back up your entire vault to a local file and migrate data between accounts.
+- [x] **Protected Routes:** Sensitive pages are protected from unauthenticated access.
+- [x] **Professional UI:** A clean, responsive, dark-themed UI with toast notifications for user feedback.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Tech Stack
 
-## Learn More
+* **Framework:** Next.js (App Router)
+* **Language:** TypeScript
+* **Database:** MongoDB (via Mongoose)
+* **Styling:** Tailwind CSS
+* **Authentication:** JWT (JSON Web Tokens), `bcryptjs`
+* **Encryption:** `crypto-js`
+* **2FA:** `speakeasy`, `qrcode`
+* **Validation:** `zod`
+* **UI Feedback:** `react-hot-toast`
 
-To learn more about Next.js, take a look at the following resources:
+## 🚀 Running Locally
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To run this project on your local machine, follow these steps:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1.  **Clone the Repository**
+    ```bash
+    git clone [your-repo-url]
+    cd secure-vault
+    ```
 
-## Deploy on Vercel
+2.  **Install Dependencies**
+    ```bash
+    npm install
+    ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3.  **Set Up Environment Variables**
+    Create a file named `.env.local` in the root of the project and add the following variables:
+    ```
+    MONGODB_URI="your_mongodb_connection_string"
+    JWT_SECRET="your_super_secret_jwt_key"
+    ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4.  **Run the Development Server**
+    ```bash
+    npm run dev
+    ```
+    The application will be available at `http://localhost:3000`.
+
+## 📝 A Note on the Cryptography
+
+This application implements a zero-knowledge architecture using client-side encryption. All sensitive data is encrypted with the **AES-256** standard. The encryption key is derived from the user's master password using **PBKDF2** with a unique, cryptographically-secure salt for each item to protect against pre-computation and rainbow table attacks.
