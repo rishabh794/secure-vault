@@ -17,6 +17,7 @@ export function AddItemForm({ masterPassword, onItemAdded }: AddItemFormProps) {
     const [url, setUrl] = useState('');
     const [notes, setNotes] = useState('');
     const [showGenerator, setShowGenerator] = useState(false);
+    const [tags, setTags] = useState('');
 
     const handleAddItem = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,6 +28,7 @@ export function AddItemForm({ masterPassword, onItemAdded }: AddItemFormProps) {
         const token = sessionStorage.getItem('token');
         const newItem = { title, username, password, url, notes };
         const encryptedData = encryptData(newItem, masterPassword);
+        const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
 
         const res = await fetch('/api/vault', {
             method: 'POST',
@@ -34,12 +36,12 @@ export function AddItemForm({ masterPassword, onItemAdded }: AddItemFormProps) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ encryptedData })
+            body: JSON.stringify({ encryptedData , tags: tagsArray })
         });
         
         if (res.ok) {
             toast.success("Item added successfully!");
-            setTitle(''); setUsername(''); setPassword(''); setUrl(''); setNotes('');
+            setTitle(''); setUsername(''); setPassword(''); setUrl(''); setNotes(''); setTags('');
             onItemAdded(); 
         } else {
             toast.error("Failed to add item.");
@@ -58,6 +60,13 @@ export function AddItemForm({ masterPassword, onItemAdded }: AddItemFormProps) {
                  </div>
                  <input value={url} onChange={e => setUrl(e.target.value)} placeholder="URL (optional)" className="px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"/>
                  <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes (optional)" className="md:col-span-2 px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md h-24"></textarea>
+                 <input 
+                    value={tags} 
+                    onChange={e => setTags(e.target.value)} 
+                    placeholder="Tags (comma-separated)" 
+                    className="md:col-span-2 px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"
+                 />
+
                  {showGenerator && (
                      <div className="md:col-span-2">
                          <PasswordGenerator onPasswordGenerated={(newPassword) => { setPassword(newPassword); setShowGenerator(false); }} />

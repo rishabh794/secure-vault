@@ -41,7 +41,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         }
 
         const itemId = params.id;
-        const { encryptedData } = await request.json();
+        const { encryptedData , tags } = await request.json();
 
         const itemToUpdate = await VaultItem.findById(itemId);
 
@@ -54,6 +54,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         }
 
         itemToUpdate.encryptedData = encryptedData;
+        itemToUpdate.tags = tags || [];
         await itemToUpdate.save();
 
         return NextResponse.json({ message: "Item updated successfully" }, { status: 200 });

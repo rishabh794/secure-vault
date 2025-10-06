@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { encryptedData } = await request.json();
+        const { encryptedData , tags } = await request.json();
         if (!encryptedData) {
             return NextResponse.json({ error: "Encrypted data is required" }, { status: 400 });
         }
@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
         const newVaultItem = new VaultItem({
             userId,
             encryptedData,
+            tags: tags || [],
         });
 
         const savedItem = await newVaultItem.save();

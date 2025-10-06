@@ -4,6 +4,7 @@ import { IUser } from './User';
 export interface IVaultItem extends Document {
   userId: IUser['_id'];
   encryptedData: string;
+  tags: string[];
 }
 
 const VaultItemSchema: Schema = new Schema({
@@ -15,6 +16,10 @@ const VaultItemSchema: Schema = new Schema({
   encryptedData: {
     type: String,
     required: true,
+  },
+  tags: {
+    type: [String],
+    default: [], 
   },
 }, { timestamps: true });
 

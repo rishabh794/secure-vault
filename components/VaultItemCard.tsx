@@ -12,7 +12,7 @@ type VaultItem = {
 
 interface VaultItemCardProps {
     decryptedData: VaultItem | null;
-    item: { _id: string; encryptedData: string }; 
+    item: { _id: string; encryptedData: string; tags: string[]}; 
     onDeleted: (id: string) => void;
     onEdit: () => void; 
 }
@@ -67,6 +67,16 @@ export function VaultItemCard({ decryptedData, item, onDeleted , onEdit}: VaultI
             
             {decryptedData?.url && <p className="text-gray-400 truncate"><strong>URL:</strong> {decryptedData.url}</p>}
             {decryptedData?.notes && <p className="text-gray-400 mt-2"><strong>Notes:</strong> {decryptedData.notes}</p>}
+            {item.tags && item.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-4">
+                    {item.tags.map(tag => (
+                        <span key={tag} className="bg-gray-600 text-gray-300 text-xs font-semibold px-2 py-1 rounded-full">
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+            )}
+        
         </div>
     );
 }

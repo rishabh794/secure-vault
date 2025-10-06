@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { encryptData, decryptData } from "@/lib/crypto";
 import toast from "react-hot-toast";
 
-type VaultItem = { title: string; username: string; password?: string; url?: string; notes?: string; };
+type VaultItem = { title: string; username: string; password?: string; url?: string; notes?: string };
 
 interface EditModalProps {
-    item: { _id: string; encryptedData: string };
+    item: { _id: string; encryptedData: string; tags?: string[]};
     masterPassword: string;
     onClose: () => void;
     onSave: () => void;
@@ -19,6 +19,7 @@ export function EditModal({ item, masterPassword, onClose, onSave }: EditModalPr
     const [password, setPassword] = useState('');
     const [url, setUrl] = useState('');
     const [notes, setNotes] = useState('');
+    const [tags, setTags] = useState('');
 
     useEffect(() => {
         try {
@@ -28,6 +29,7 @@ export function EditModal({ item, masterPassword, onClose, onSave }: EditModalPr
             setPassword(decrypted.password || '');
             setUrl(decrypted.url || '');
             setNotes(decrypted.notes || '');
+            setTags(item.tags?.join(', ') || '');
         } catch {
             toast.error("Failed to decrypt item for editing.");
             onClose();
@@ -38,12 +40,13 @@ export function EditModal({ item, masterPassword, onClose, onSave }: EditModalPr
         e.preventDefault();
         const updatedItem = { title, username, password, url, notes };
         const encryptedData = encryptData(updatedItem, masterPassword);
+        const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
 
         const token = sessionStorage.getItem('token');
         const res = await fetch(`/api/vault/${item._id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ encryptedData }),
+            body: JSON.stringify({ encryptedData , tags: tagsArray }),
         });
 
         if (res.ok) {
@@ -65,6 +68,13 @@ export function EditModal({ item, masterPassword, onClose, onSave }: EditModalPr
                      <input type="text" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required className="w-full px-3 py-2 text-white bg-gray-700 rounded-md"/>
                      <input value={url} onChange={e => setUrl(e.target.value)} placeholder="URL (optional)" className="w-full px-3 py-2 text-white bg-gray-700 rounded-md"/>
                      <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes (optional)" className="w-full px-3 py-2 text-white bg-gray-700 rounded-md h-24"></textarea>
+                     <input 
+                        value={tags} 
+                        onChange={e => setTags(e.target.value)} 
+                        placeholder="Tags (comma-separated)" 
+                        className="w-full px-3 py-2 text-white bg-gray-700 rounded-md"
+                     />
+                    
                     <div className="flex justify-end space-x-4">
                         <button type="button" onClick={onClose} className="px-4 py-2 font-bold text-gray-300 bg-gray-600 rounded-md hover:bg-gray-500">Cancel</button>
                         <button type="submit" className="px-4 py-2 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700">Save Changes</button>

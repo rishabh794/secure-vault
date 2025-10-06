@@ -8,6 +8,7 @@ import { AddItemForm } from '@/components/AddItemForm'
 import { VaultItemCard } from '@/components/VaultItemCard';
 import { EditModal } from '@/components/EditModal';
 import { SearchInput } from '@/components/SearchInput';
+import { TagFilter } from '@/components/TagFilter';
 
 type VaultItem = {
     title: string;
@@ -18,12 +19,21 @@ type VaultItem = {
 };
 
 export default function DashboardPage() {
-    const [items, setItems] = useState<Array<{ _id: string; encryptedData: string }>>([]);
+    const [items, setItems] = useState<Array<{ _id: string; encryptedData: string; tags:string[] }>>([]);
     const [decryptedItems, setDecryptedItems] = useState<Record<string, VaultItem>>({});
     const [masterPassword, setMasterPassword] = useState('');
     const [editingItem, setEditingItem] = useState<{ _id: string; encryptedData: string } | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [showMasterPassword, setShowMasterPassword] = useState(false);
+    const [activeTag, setActiveTag] = useState<string | null>(null);
+
+     const allTags = useMemo(() => {
+        const tagsSet = new Set<string>();
+        items.forEach(item => {
+            item.tags?.forEach(tag => tagsSet.add(tag));
+        });
+        return Array.from(tagsSet).sort();
+    }, [items]);
 
     const fetchItems = async () => {
         const token = sessionStorage.getItem('token');
@@ -73,22 +83,27 @@ export default function DashboardPage() {
         setEditingItem(item);
     };
 
-     const filteredItems = useMemo(() => {
-        if (Object.keys(decryptedItems).length === 0 || !searchTerm) {
-            return items;
+    const filteredItems = useMemo(() => {
+        let filtered = items;
+
+        if (activeTag) {
+            filtered = filtered.filter(item => item.tags?.includes(activeTag));
         }
 
-        return items.filter(item => {
-            const decrypted = decryptedItems[item._id];
-            if (!decrypted) return false;
+        if (searchTerm) {
+            filtered = filtered.filter(item => {
+                const decrypted = decryptedItems[item._id];
+                if (!decrypted) return false;
 
-            const searchTermLower = searchTerm.toLowerCase();
-            const titleLower = decrypted.title.toLowerCase();
-            const usernameLower = decrypted.username.toLowerCase();
+                const searchTermLower = searchTerm.toLowerCase();
 
-            return titleLower.includes(searchTermLower) || usernameLower.includes(searchTermLower);
-        });
-    }, [searchTerm, items, decryptedItems]);
+                return decrypted.title.toLowerCase().includes(searchTermLower) ||
+                       decrypted.username.toLowerCase().includes(searchTermLower);
+            });
+        }
+        
+        return filtered;
+    }, [searchTerm, items, decryptedItems, activeTag]);
 
     
     return (
@@ -117,6 +132,11 @@ export default function DashboardPage() {
 
                 <AddItemForm masterPassword={masterPassword} onItemAdded={fetchItems} />
                 <SearchInput searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+                <TagFilter 
+                        allTags={allTags}
+                        activeTag={activeTag}
+                        onTagSelect={setActiveTag}
+                    />
 
                 <div>
                     <h2 className="text-xl font-semibold mb-4">Your Vault Items</h2>
