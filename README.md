@@ -2,9 +2,11 @@
 
 A fully-featured, privacy-first password manager built with Next.js and MongoDB. All data is encrypted and decrypted on the client-side, meaning the server never has access to your plaintext secrets.
 
-**Live Demo:** [Link to my deployed app will go here]
+**Live Demo:** [https://secure-vault-livid.vercel.app/login](https://secure-vault-livid.vercel.app/login)
+
 
 ![Screenshot of the SecureVault Dashboard](./assets/localhost_3000_dashboard.png)
+
 
 ## Features
 
