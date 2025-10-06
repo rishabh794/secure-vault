@@ -40,7 +40,7 @@ To run this project on your local machine, follow these steps:
 
 1.  **Clone the Repository**
     ```bash
-    git clone [your-repo-url]
+    git clone https://github.com/rishabh794/secure-vault.git
     cd secure-vault
     ```
 
