@@ -83,6 +83,12 @@ export default function DashboardPage() {
         setEditingItem(item);
     };
 
+    const handleUpdateSuccess = () => {
+        fetchItems();
+        setDecryptedItems({});
+        toast('Item updated. Please unlock vault to see changes.');
+    };
+
     const filteredItems = useMemo(() => {
         let filtered = items;
 
@@ -161,7 +167,7 @@ export default function DashboardPage() {
                         item={editingItem}
                         masterPassword={masterPassword}
                         onClose={() => setEditingItem(null)}
-                        onSave={fetchItems}
+                        onSave={handleUpdateSuccess}
                     />
                 )}
             </div>

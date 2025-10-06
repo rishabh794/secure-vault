@@ -42,7 +42,11 @@ export function VaultItemCard({ decryptedData, item, onDeleted , onEdit}: VaultI
         if (!text) return;
         navigator.clipboard.writeText(text);
         toast.success(`${fieldName} copied to clipboard!`);
-        setTimeout(() => navigator.clipboard.writeText(' '), 15000);
+        setTimeout(() => {
+            if (document.hasFocus()) {
+                navigator.clipboard.writeText(' ');
+            }
+        }, 15000);
     };
 
     return (
