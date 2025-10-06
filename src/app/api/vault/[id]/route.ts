@@ -3,7 +3,7 @@ import { dbConnect } from "@/lib/dbConnect";
 import { VaultItem } from "@/models/VaultItem";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
     await dbConnect();
     try {
         const userId = getDataFromToken(request);
@@ -11,7 +11,7 @@ export async function DELETE(request: NextRequest, context: { params: { id: stri
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const itemId = context.params.id;
+        const { id: itemId } = await context.params;
         const itemToDelete = await VaultItem.findById(itemId);
 
         if (!itemToDelete) {
@@ -32,7 +32,7 @@ export async function DELETE(request: NextRequest, context: { params: { id: stri
     }
 }
 
-export async function PUT(request: NextRequest, context: { params: { id: string } })  {
+export async function PUT(request: NextRequest, context: { params: Promise<{ id: string }> })  {
     await dbConnect();
     try {
         const userId = getDataFromToken(request);
@@ -40,7 +40,7 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const itemId = context.params.id;
+        const { id: itemId } = await context.params;
         const { encryptedData , tags } = await request.json();
 
         const itemToUpdate = await VaultItem.findById(itemId);
