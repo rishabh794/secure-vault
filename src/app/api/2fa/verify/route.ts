@@ -3,6 +3,7 @@ import { dbConnect } from "@/lib/dbConnect";
 import { User } from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
 import speakeasy from 'speakeasy';
+import jwt from 'jsonwebtoken';
 
 export async function POST(request: NextRequest) {
     await dbConnect();
@@ -28,7 +29,15 @@ export async function POST(request: NextRequest) {
         if (verified) {
             user.isTwoFactorEnabled = true;
             await user.save();
-            return NextResponse.json({ success: true, message: "2FA enabled successfully!" });
+
+            const tokenData = {
+                id: user._id,
+                email: user.email,
+                isTwoFactorEnabled: user.isTwoFactorEnabled,
+            };
+            const newToken = jwt.sign(tokenData, process.env.JWT_SECRET!, { expiresIn: '7d' });
+
+            return NextResponse.json({ success: true, message: "2FA enabled successfully!" , token: newToken});
         } else {
             return NextResponse.json({ success: false, message: "Invalid 2FA code. Please try again." }, { status: 400 });
         }

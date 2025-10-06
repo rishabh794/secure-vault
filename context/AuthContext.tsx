@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 interface User {
   id: string;
   email: string;
+  isTwoFactorEnabled: boolean;
 }
 
 interface AuthContextType {

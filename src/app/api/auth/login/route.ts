@@ -29,7 +29,8 @@ export async function POST(request: Request) {
 
         const tokenData = {
             id: user._id,
-            email: user.email
+            email: user.email,
+            isTwoFactorEnabled: user.isTwoFactorEnabled
         };
 
         const token = jwt.sign(tokenData, process.env.JWT_SECRET!, { expiresIn: '7d' });
