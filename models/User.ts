@@ -3,6 +3,8 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IUser extends Document {
   email: string;
   password_hash: string;
+  isTwoFactorEnabled: boolean;
+  twoFactorSecret: string;
 }
 
 const UserSchema: Schema = new Schema({
@@ -14,6 +16,13 @@ const UserSchema: Schema = new Schema({
   password_hash: {
     type: String,
     required: [true, 'Please provide a password.'],
+  },
+  isTwoFactorEnabled: {
+    type: Boolean,
+    default: false,
+  },
+  twoFactorSecret: {
+    type: String,
   },
 }, { timestamps: true }); 
 

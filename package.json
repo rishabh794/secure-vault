@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@types/crypto-js": "^4.2.2",
+    "@types/qrcode": "^1.5.5",
+    "@types/speakeasy": "^2.0.10",
     "bcryptjs": "^3.0.2",
     "crypto-js": "^4.2.0",
     "jsonwebtoken": "^9.0.2",
@@ -17,9 +19,11 @@
     "mongodb": "^6.20.0",
     "mongoose": "^8.19.0",
     "next": "15.5.4",
+    "qrcode": "^1.5.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-hot-toast": "^2.6.0"
+    "react-hot-toast": "^2.6.0",
+    "speakeasy": "^2.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
