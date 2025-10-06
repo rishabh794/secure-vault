@@ -23,6 +23,7 @@ export default function DashboardPage() {
     const [masterPassword, setMasterPassword] = useState('');
     const [editingItem, setEditingItem] = useState<{ _id: string; encryptedData: string } | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [showMasterPassword, setShowMasterPassword] = useState(false);
 
     const fetchItems = async () => {
         const token = sessionStorage.getItem('token');
@@ -98,13 +99,18 @@ export default function DashboardPage() {
                 <div className="bg-gray-800 rounded-lg shadow-md p-6 mb-8">
                     <h2 className="text-xl font-semibold mb-4">Unlock Your Vault</h2>
                     <div className="flex items-center space-x-4">
-                        <input
-                            type="password"
-                            placeholder="Enter Your Master Password"
-                            value={masterPassword}
-                            onChange={(e) => setMasterPassword(e.target.value)}
-                            className="flex-grow px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        <div className="relative flex-grow">
+                            <input
+                                type={showMasterPassword ? 'text' : 'password'}
+                                placeholder="Enter Your Master Password"
+                                value={masterPassword}
+                                onChange={(e) => setMasterPassword(e.target.value)}
+                                className="w-full px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button type="button" onClick={() => setShowMasterPassword(!showMasterPassword)} className="absolute inset-y-0 right-0 px-3 flex items-center text-sm text-gray-400 hover:text-white">
+                                {showMasterPassword ? 'Hide' : 'Show'}
+                            </button>
+                        </div>
                         <button onClick={handleDecryptAll} className="px-4 py-2 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700">Unlock Vault</button>
                     </div>
                 </div>
