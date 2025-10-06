@@ -1,13 +1,12 @@
-# 🔒 SecureVault - A Zero-Knowledge Password Manager
+# SecureVault - A Zero-Knowledge Password Manager
 
 A fully-featured, privacy-first password manager built with Next.js and MongoDB. All data is encrypted and decrypted on the client-side, meaning the server never has access to your plaintext secrets.
 
 **Live Demo:** [Link to my deployed app will go here]
 
-![Screenshot of the SecureVault Dashboard](<img width="2490" height="3048" alt="localhost_3000_dashboard" src="https://github.com/user-attachments/assets/d0738347-e1f0-49aa-9159-e493c6a2a000" />
-)
+![Screenshot of the SecureVault Dashboard](./assets/localhost_3000_dashboard.png)
 
-## ✨ Features
+## Features
 
 - [x] **Zero-Knowledge Architecture:** All encryption/decryption happens in the browser.
 - [x] **Strong User Authentication:** Secure registration and login with JWT sessions.
@@ -21,7 +20,7 @@ A fully-featured, privacy-first password manager built with Next.js and MongoDB.
 - [x] **Protected Routes:** Sensitive pages are protected from unauthenticated access.
 - [x] **Professional UI:** A clean, responsive, dark-themed UI with toast notifications for user feedback.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 * **Framework:** Next.js (App Router)
 * **Language:** TypeScript
@@ -33,7 +32,7 @@ A fully-featured, privacy-first password manager built with Next.js and MongoDB.
 * **Validation:** `zod`
 * **UI Feedback:** `react-hot-toast`
 
-## 🚀 Running Locally
+## Running Locally
 
 To run this project on your local machine, follow these steps:
 
@@ -61,6 +60,6 @@ To run this project on your local machine, follow these steps:
     ```
     The application will be available at `http://localhost:3000`.
 
-## 📝 A Note on the Cryptography
+## A Note on the Cryptography
 
 This application implements a zero-knowledge architecture using client-side encryption. All sensitive data is encrypted with the **AES-256** standard. The encryption key is derived from the user's master password using **PBKDF2** with a unique, cryptographically-secure salt for each item to protect against pre-computation and rainbow table attacks.
