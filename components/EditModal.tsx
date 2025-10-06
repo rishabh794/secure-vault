@@ -23,7 +23,7 @@ export function EditModal({ item, masterPassword, onClose, onSave }: EditModalPr
 
     useEffect(() => {
         try {
-            const decrypted = decryptData(item.encryptedData, masterPassword) as VaultItem;
+            const decrypted = decryptData<VaultItem>(item.encryptedData, masterPassword);
             setTitle(decrypted.title);
             setUsername(decrypted.username);
             setPassword(decrypted.password || '');

@@ -66,7 +66,7 @@ export default function DashboardPage() {
         try {
             const decrypted: Record<string, VaultItem> = {};
             items.forEach(item => {
-                decrypted[item._id] = decryptData(item.encryptedData, masterPassword) as VaultItem;
+                decrypted[item._id] = decryptData<VaultItem>(item.encryptedData, masterPassword);
             });
             setDecryptedItems(decrypted);
             toast.success("Vault unlocked!");

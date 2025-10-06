@@ -37,7 +37,7 @@ function encryptData(data: object, masterPassword: string): string {
  * @param masterPassword The user's master password.
  * @returns The decrypted data object.
  */
-function decryptData(encryptedString: string, masterPassword: string): object {
+function decryptData<T>(encryptedString: string, masterPassword: string): T {
     const salt = CryptoJS.enc.Hex.parse(encryptedString.substr(0, 32));
     const iv = CryptoJS.enc.Hex.parse(encryptedString.substr(32, 32));
     const encrypted = encryptedString.substring(64);
@@ -54,7 +54,7 @@ function decryptData(encryptedString: string, masterPassword: string): object {
     });
 
     const jsonString = decrypted.toString(CryptoJS.enc.Utf8);
-    return JSON.parse(jsonString);
+    return JSON.parse(jsonString) as T;
 }
 
 export {encryptData , decryptData};

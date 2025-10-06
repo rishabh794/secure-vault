@@ -20,6 +20,11 @@ export default function SettingsPage() {
                         <p className="text-gray-400 mt-1">Create a secure, encrypted backup of your vault data.</p>
                     </Link>
 
+                    <Link href="/settings/import" className="block p-6 bg-gray-800 rounded-lg shadow-md hover:bg-gray-700 transition-colors">
+                        <h2 className="text-xl font-semibold">Import Vault</h2>
+                        <p className="text-gray-400 mt-1">Restore your vault from an encrypted backup file.</p>
+                    </Link>
+
                 </div>
             </div>
         </ProtectedRoute>
