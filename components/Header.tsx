@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
 export function Header() {
-    const { user, logout , isLoading  } = useAuth(); // Get the full user object
+    const { user, logout , isLoading  } = useAuth(); 
     const router = useRouter();
 
     const handleLogout = () => {
@@ -20,12 +20,17 @@ export function Header() {
                     SecureVault
                 </Link>
                 <nav className="flex items-center">
-                    {isLoading ? null : user ? ( // Check if the user object exists
+                    {isLoading ? null : user ? ( 
                         <>
                             <span className="mr-4">Welcome, {user.email}</span>
                             <Link href="/dashboard" className="mr-4 hover:text-gray-300">
                                 Dashboard
                             </Link>
+
+                            <Link href="/settings/security" className="mr-4 hover:text-gray-300">
+                                Security
+                            </Link>
+                            
                             <button onClick={handleLogout} className="hover:text-gray-300">
                                 Logout
                             </button>
