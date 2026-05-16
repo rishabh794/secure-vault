@@ -53,37 +53,37 @@ export function AddItemForm({ masterPassword, onItemAdded, canAdd }: AddItemForm
     };
 
     return (
-        <div className="w-full max-w-4xl rounded-2xl border border-slate-800/80 bg-slate-900/60 p-6 mb-8 shadow-xl">
+        <div className="w-full rounded-2xl border border-slate-800/80 bg-slate-900/60 p-6 shadow-xl">
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-slate-50">Add New Item</h2>
                 {!canAdd && (
                     <span className="text-sm text-amber-300">Unlock your vault to add items.</span>
                 )}
             </div>
-            <form onSubmit={handleAddItem} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form onSubmit={handleAddItem} className="space-y-4">
                 <fieldset disabled={!canAdd} className={canAdd ? "" : "opacity-60"}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                         <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Title" required className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"/>
                         <input value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" required className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"/>
-                        <div className="flex items-center gap-2">
-                            <input type="text" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50" />
-                            <button type="button" onClick={() => setShowGenerator(!showGenerator)} className="h-11 shrink-0 rounded-lg border border-slate-700/70 bg-slate-800/70 px-4 text-sm font-semibold text-slate-100 hover:border-slate-500">Generate</button>
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                            <input type="text" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50 sm:flex-1" />
+                            <button type="button" onClick={() => setShowGenerator(!showGenerator)} className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-800/70 px-4 text-sm font-semibold text-slate-100 hover:border-slate-500 sm:w-auto">Generate</button>
                         </div>
                         <input value={url} onChange={e => setUrl(e.target.value)} placeholder="URL (optional)" className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"/>
-                        <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes (optional)" className="md:col-span-2 min-h-[110px] rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 py-2 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"></textarea>
+                        <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes (optional)" className="min-h-[110px] rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 py-2 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"></textarea>
                         <input 
                             value={tags} 
                             onChange={e => setTags(e.target.value)} 
                             placeholder="Tags (comma-separated)" 
-                            className="md:col-span-2 h-11 rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"
+                            className="h-11 rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"
                         />
 
                         {showGenerator && (
-                            <div className="md:col-span-2">
+                            <div>
                                 <PasswordGenerator onPasswordGenerated={(newPassword) => { setPassword(newPassword); setShowGenerator(false); }} />
                             </div>
                         )}
-                        <button type="submit" className="md:col-span-2 w-full rounded-full bg-emerald-400/90 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-300">Add Item</button>
+                        <button type="submit" className="w-full rounded-full bg-emerald-400/90 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-300">Add Item</button>
                     </div>
                 </fieldset>
             </form>

@@ -9,6 +9,7 @@ export default function RegisterPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
      const [showPassword, setShowPassword] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
 
     const [passwordValidity, setPasswordValidity] = useState({
@@ -31,17 +32,25 @@ export default function RegisterPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const res = await fetch('/api/auth/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-        });
-        const data = await res.json();
-        if (res.ok) {
-            toast.success('Registration successful! Redirecting to login...');
-            setTimeout(() => router.push('/login'), 2000);
-        } else {
-            toast.error(data.message || 'An error occurred.');
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+        try {
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                toast.success('Registration successful! Redirecting to login...');
+                setTimeout(() => router.push('/login'), 2000);
+            } else {
+                toast.error(data.message || 'An error occurred.');
+            }
+        } catch {
+            toast.error('An error occurred.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -79,7 +88,13 @@ export default function RegisterPage() {
                         <li className={passwordValidity.hasSymbol ? 'text-emerald-300' : ''}>Contains a special character (@$!%*?&)</li>
                     </ul>
 
-                    <button type="submit" className="w-full rounded-full bg-emerald-400/90 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-300">Register</button>
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full rounded-full bg-emerald-400/90 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                        {isSubmitting ? 'Creating account...' : 'Register'}
+                    </button>
                 </form>
                  <p className="text-sm text-center text-slate-400">
                     Already have an account?{' '}

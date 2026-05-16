@@ -153,62 +153,70 @@ export default function DashboardPage() {
     
     return (
         <ProtectedRoute>
-            <div className="min-h-screen bg-slate-950 text-slate-100 px-6 py-8">
-                <div className="mx-auto max-w-6xl">
+            <div className="min-h-screen bg-slate-950 text-slate-100 px-4 py-8 sm:px-6">
+                <div className="mx-auto w-full max-w-6xl">
                     <h1 className="text-3xl font-semibold text-slate-50 mb-6">Dashboard</h1>
 
-                    <div className="rounded-2xl border border-slate-800/80 bg-slate-900/60 p-6 mb-8 shadow-xl">
-                        <h2 className="text-xl font-semibold text-slate-50 mb-4">Unlock Your Vault</h2>
-                        <div className="flex flex-col gap-4 md:flex-row md:items-center">
-                        <div className="relative flex-grow">
-                            <input
-                                type={showMasterPassword ? 'text' : 'password'}
-                                placeholder="Enter Your Master Password"
-                                value={masterPassword}
-                                onChange={(e) => handleMasterPasswordChange(e.target.value)}
-                                className="w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-4 py-2.5 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"
+                    <div className="grid gap-6 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
+                        <div className="space-y-6">
+                            <div className="rounded-2xl border border-slate-800/80 bg-slate-900/60 p-6 shadow-xl">
+                                <h2 className="text-xl font-semibold text-slate-50 mb-4">Unlock Your Vault</h2>
+                                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                                    <div className="relative flex-grow">
+                                        <input
+                                            type={showMasterPassword ? 'text' : 'password'}
+                                            placeholder="Enter Your Master Password"
+                                            value={masterPassword}
+                                            onChange={(e) => handleMasterPasswordChange(e.target.value)}
+                                            className="w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-4 py-2.5 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"
+                                        />
+                                        <button type="button" onClick={() => setShowMasterPassword(!showMasterPassword)} className="absolute inset-y-0 right-0 px-3 flex items-center text-sm text-slate-400 hover:text-slate-100">
+                                            {showMasterPassword ? 'Hide' : 'Show'}
+                                        </button>
+                                    </div>
+                                    <button onClick={handleDecryptAll} className="rounded-full bg-emerald-400/90 px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-300">Unlock Vault</button>
+                                </div>
+                                <p className="mt-3 text-sm text-slate-400">
+                                    Use one master password for all items.
+                                </p>
+                            </div>
+
+                            <AddItemForm
+                                masterPassword={masterPassword}
+                                onItemAdded={fetchItems}
+                                canAdd={isVaultUnlocked || items.length === 0}
                             />
-                            <button type="button" onClick={() => setShowMasterPassword(!showMasterPassword)} className="absolute inset-y-0 right-0 px-3 flex items-center text-sm text-slate-400 hover:text-slate-100">
-                                {showMasterPassword ? 'Hide' : 'Show'}
-                            </button>
                         </div>
-                        <button onClick={handleDecryptAll} className="rounded-full bg-emerald-400/90 px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-300">Unlock Vault</button>
-                    </div>
-                    <p className="mt-3 text-sm text-slate-400">
-                        Use one master password for all items.
-                    </p>
-                </div>
 
-                    <AddItemForm
-                        masterPassword={masterPassword}
-                        onItemAdded={fetchItems}
-                        canAdd={isVaultUnlocked || items.length === 0}
-                    />
-                    <SearchInput searchTerm={searchTerm} onSearchChange={setSearchTerm} />
-                    <TagFilter 
-                            allTags={allTags}
-                            activeTag={activeTag}
-                            onTagSelect={setActiveTag}
-                        />
-
-                    <div>
-                        <h2 className="text-xl font-semibold text-slate-50 mb-4">Your Vault Items</h2>
                         <div className="space-y-4">
-                            {filteredItems.length > 0 ? (
-                                filteredItems.map(item => (
-                                    <VaultItemCard 
-                                        key={item._id}
-                                        item={item}
-                                        decryptedData={decryptedItems[item._id] || null} 
-                                        onDeleted={fetchItems}
-                                        onEdit={() => handleEditClick(item)}
-                                    />
-                                ))
-                            ) : (
-                                <p className="text-slate-400">Your vault is empty. Add an item to get started.</p>
-                            )}
+                            <SearchInput searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+                            <TagFilter 
+                                    allTags={allTags}
+                                    activeTag={activeTag}
+                                    onTagSelect={setActiveTag}
+                                />
+
+                            <div>
+                                <h2 className="text-xl font-semibold text-slate-50 mb-4">Your Vault Items</h2>
+                                <div className="space-y-4">
+                                    {filteredItems.length > 0 ? (
+                                        filteredItems.map(item => (
+                                            <VaultItemCard 
+                                                key={item._id}
+                                                item={item}
+                                                decryptedData={decryptedItems[item._id] || null} 
+                                                onDeleted={fetchItems}
+                                                onEdit={() => handleEditClick(item)}
+                                            />
+                                        ))
+                                    ) : (
+                                        <p className="text-slate-400">Your vault is empty. Add an item to get started.</p>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                       {editingItem && (
                         <EditModal 
                             item={editingItem}

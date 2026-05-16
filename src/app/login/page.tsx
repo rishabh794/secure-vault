@@ -10,23 +10,32 @@ export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
     const { login } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const res = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-        });
-        const data = await res.json();
-        if (res.ok) {
-            toast.success('Login successful!');
-            login(data.token);
-            router.push('/dashboard');
-        } else {
-            toast.error(data.message || 'An error occurred.');
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                toast.success('Login successful!');
+                login(data.token);
+                router.push('/dashboard');
+            } else {
+                toast.error(data.message || 'An error occurred.');
+            }
+        } catch {
+            toast.error('An error occurred.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -55,7 +64,13 @@ export default function LoginPage() {
                             </button>
                         </div>
                     </div>
-                    <button type="submit" className="w-full rounded-full bg-emerald-400/90 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-300">Login</button>
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full rounded-full bg-emerald-400/90 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                        {isSubmitting ? 'Signing in...' : 'Login'}
+                    </button>
                 </form>
                 <p className="text-sm text-center text-slate-400">
                     Don&#39;t have an account?{' '}
