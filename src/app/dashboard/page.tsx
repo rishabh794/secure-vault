@@ -22,6 +22,7 @@ export default function DashboardPage() {
     const [items, setItems] = useState<Array<{ _id: string; encryptedData: string; tags:string[] }>>([]);
     const [decryptedItems, setDecryptedItems] = useState<Record<string, VaultItem>>({});
     const [masterPassword, setMasterPassword] = useState('');
+    const [isVaultUnlocked, setIsVaultUnlocked] = useState(false);
     const [editingItem, setEditingItem] = useState<{ _id: string; encryptedData: string } | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [showMasterPassword, setShowMasterPassword] = useState(false);
@@ -60,18 +61,51 @@ export default function DashboardPage() {
 
     const handleDecryptAll = () => {
         if (!masterPassword) {
-            alert("Please enter your master password to decrypt.");
+            toast.error("Please enter your master password to unlock.");
             return;
         }
-        try {
-            const decrypted: Record<string, VaultItem> = {};
-            items.forEach(item => {
+
+        if (items.length === 0) {
+            setIsVaultUnlocked(true);
+            setDecryptedItems({});
+            toast.success("Vault unlocked. Add your first item.");
+            return;
+        }
+
+        const decrypted: Record<string, VaultItem> = {};
+        const failedItemIds: string[] = [];
+
+        items.forEach(item => {
+            try {
                 decrypted[item._id] = decryptData<VaultItem>(item.encryptedData, masterPassword);
-            });
-            setDecryptedItems(decrypted);
-            toast.success("Vault unlocked!");
-        } catch {
+            } catch {
+                failedItemIds.push(item._id);
+            }
+        });
+
+        if (Object.keys(decrypted).length === 0) {
+            setDecryptedItems({});
+            setIsVaultUnlocked(false);
             toast.error("Decryption failed. Check your master password.");
+            return;
+        }
+
+        setDecryptedItems(decrypted);
+        setIsVaultUnlocked(true);
+
+        if (failedItemIds.length > 0) {
+            toast("Vault unlocked, but some items could not be decrypted. They may use a different master password.");
+        } else {
+            toast.success("Vault unlocked!");
+        }
+    };
+
+    const handleMasterPasswordChange = (value: string) => {
+        setMasterPassword(value);
+        setIsVaultUnlocked(false);
+        setDecryptedItems({});
+        if (editingItem) {
+            setEditingItem(null);
         }
     };
 
@@ -80,12 +114,17 @@ export default function DashboardPage() {
             toast.error("Please enter your master password first.");
             return;
         }
+        if (!isVaultUnlocked) {
+            toast.error("Unlock your vault to edit items.");
+            return;
+        }
         setEditingItem(item);
     };
 
     const handleUpdateSuccess = () => {
         fetchItems();
         setDecryptedItems({});
+        setIsVaultUnlocked(false);
         toast('Item updated. Please unlock vault to see changes.');
     };
 
@@ -114,62 +153,71 @@ export default function DashboardPage() {
     
     return (
         <ProtectedRoute>
-            <div className="bg-gray-900 text-white min-h-screen p-4 md:p-8">
-                <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+            <div className="min-h-screen bg-slate-950 text-slate-100 px-6 py-8">
+                <div className="mx-auto max-w-6xl">
+                    <h1 className="text-3xl font-semibold text-slate-50 mb-6">Dashboard</h1>
 
-                <div className="bg-gray-800 rounded-lg shadow-md p-6 mb-8">
-                    <h2 className="text-xl font-semibold mb-4">Unlock Your Vault</h2>
-                    <div className="flex items-center space-x-4">
+                    <div className="rounded-2xl border border-slate-800/80 bg-slate-900/60 p-6 mb-8 shadow-xl">
+                        <h2 className="text-xl font-semibold text-slate-50 mb-4">Unlock Your Vault</h2>
+                        <div className="flex flex-col gap-4 md:flex-row md:items-center">
                         <div className="relative flex-grow">
                             <input
                                 type={showMasterPassword ? 'text' : 'password'}
                                 placeholder="Enter Your Master Password"
                                 value={masterPassword}
-                                onChange={(e) => setMasterPassword(e.target.value)}
-                                className="w-full px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onChange={(e) => handleMasterPasswordChange(e.target.value)}
+                                className="w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-4 py-2.5 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"
                             />
-                            <button type="button" onClick={() => setShowMasterPassword(!showMasterPassword)} className="absolute inset-y-0 right-0 px-3 flex items-center text-sm text-gray-400 hover:text-white">
+                            <button type="button" onClick={() => setShowMasterPassword(!showMasterPassword)} className="absolute inset-y-0 right-0 px-3 flex items-center text-sm text-slate-400 hover:text-slate-100">
                                 {showMasterPassword ? 'Hide' : 'Show'}
                             </button>
                         </div>
-                        <button onClick={handleDecryptAll} className="px-4 py-2 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700">Unlock Vault</button>
+                        <button onClick={handleDecryptAll} className="rounded-full bg-emerald-400/90 px-5 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-300">Unlock Vault</button>
                     </div>
+                    <p className="mt-3 text-sm text-slate-400">
+                        Use one master password for all items.
+                    </p>
                 </div>
 
-                <AddItemForm masterPassword={masterPassword} onItemAdded={fetchItems} />
-                <SearchInput searchTerm={searchTerm} onSearchChange={setSearchTerm} />
-                <TagFilter 
-                        allTags={allTags}
-                        activeTag={activeTag}
-                        onTagSelect={setActiveTag}
-                    />
-
-                <div>
-                    <h2 className="text-xl font-semibold mb-4">Your Vault Items</h2>
-                    <div className="space-y-4">
-                        {filteredItems.length > 0 ? (
-                            filteredItems.map(item => (
-                                <VaultItemCard 
-                                    key={item._id}
-                                    item={item}
-                                    decryptedData={decryptedItems[item._id] || null} 
-                                    onDeleted={fetchItems}
-                                    onEdit={() => handleEditClick(item)}
-                                />
-                            ))
-                        ) : (
-                            <p className="text-gray-500">Your vault is empty. Add an item to get started.</p>
-                        )}
-                    </div>
-                </div>
-                  {editingItem && (
-                    <EditModal 
-                        item={editingItem}
+                    <AddItemForm
                         masterPassword={masterPassword}
-                        onClose={() => setEditingItem(null)}
-                        onSave={handleUpdateSuccess}
+                        onItemAdded={fetchItems}
+                        canAdd={isVaultUnlocked || items.length === 0}
                     />
-                )}
+                    <SearchInput searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+                    <TagFilter 
+                            allTags={allTags}
+                            activeTag={activeTag}
+                            onTagSelect={setActiveTag}
+                        />
+
+                    <div>
+                        <h2 className="text-xl font-semibold text-slate-50 mb-4">Your Vault Items</h2>
+                        <div className="space-y-4">
+                            {filteredItems.length > 0 ? (
+                                filteredItems.map(item => (
+                                    <VaultItemCard 
+                                        key={item._id}
+                                        item={item}
+                                        decryptedData={decryptedItems[item._id] || null} 
+                                        onDeleted={fetchItems}
+                                        onEdit={() => handleEditClick(item)}
+                                    />
+                                ))
+                            ) : (
+                                <p className="text-slate-400">Your vault is empty. Add an item to get started.</p>
+                            )}
+                        </div>
+                    </div>
+                      {editingItem && (
+                        <EditModal 
+                            item={editingItem}
+                            masterPassword={masterPassword}
+                            onClose={() => setEditingItem(null)}
+                            onSave={handleUpdateSuccess}
+                        />
+                    )}
+                </div>
             </div>
         </ProtectedRoute>
     );

@@ -7,10 +7,11 @@ import { PasswordGenerator } from './PasswordGenerator';
 
 interface AddItemFormProps {
     masterPassword: string;
-    onItemAdded: () => void; 
+    onItemAdded: () => void;
+    canAdd: boolean;
 }
 
-export function AddItemForm({ masterPassword, onItemAdded }: AddItemFormProps) {
+export function AddItemForm({ masterPassword, onItemAdded, canAdd }: AddItemFormProps) {
     const [title, setTitle] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -21,6 +22,9 @@ export function AddItemForm({ masterPassword, onItemAdded }: AddItemFormProps) {
 
     const handleAddItem = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!canAdd) {
+            return toast.error("Unlock your vault to add items.");
+        }
         if (!masterPassword) {
             return toast.error("Please enter your master password to add an item.");
         }
@@ -49,31 +53,40 @@ export function AddItemForm({ masterPassword, onItemAdded }: AddItemFormProps) {
     };
 
     return (
-        <div className="bg-gray-800 rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-xl font-semibold mb-4">Add New Item</h2>
+        <div className="w-full max-w-4xl rounded-2xl border border-slate-800/80 bg-slate-900/60 p-6 mb-8 shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-slate-50">Add New Item</h2>
+                {!canAdd && (
+                    <span className="text-sm text-amber-300">Unlock your vault to add items.</span>
+                )}
+            </div>
             <form onSubmit={handleAddItem} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Title" required className="px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"/>
-                 <input value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" required className="px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"/>
-                 <div className="flex items-center space-x-2">
-                     <input type="text" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required className="flex-grow px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md" />
-                     <button type="button" onClick={() => setShowGenerator(!showGenerator)} className="px-4 py-2 font-semibold text-white bg-gray-600 rounded-md hover:bg-gray-500">Generate</button>
-                 </div>
-                 <input value={url} onChange={e => setUrl(e.target.value)} placeholder="URL (optional)" className="px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"/>
-                 <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes (optional)" className="md:col-span-2 px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md h-24"></textarea>
-                 <input 
-                    value={tags} 
-                    onChange={e => setTags(e.target.value)} 
-                    placeholder="Tags (comma-separated)" 
-                    className="md:col-span-2 px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"
-                 />
+                <fieldset disabled={!canAdd} className={canAdd ? "" : "opacity-60"}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Title" required className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"/>
+                        <input value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" required className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"/>
+                        <div className="flex items-center gap-2">
+                            <input type="text" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50" />
+                            <button type="button" onClick={() => setShowGenerator(!showGenerator)} className="h-11 shrink-0 rounded-lg border border-slate-700/70 bg-slate-800/70 px-4 text-sm font-semibold text-slate-100 hover:border-slate-500">Generate</button>
+                        </div>
+                        <input value={url} onChange={e => setUrl(e.target.value)} placeholder="URL (optional)" className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"/>
+                        <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes (optional)" className="md:col-span-2 min-h-[110px] rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 py-2 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"></textarea>
+                        <input 
+                            value={tags} 
+                            onChange={e => setTags(e.target.value)} 
+                            placeholder="Tags (comma-separated)" 
+                            className="md:col-span-2 h-11 rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"
+                        />
 
-                 {showGenerator && (
-                     <div className="md:col-span-2">
-                         <PasswordGenerator onPasswordGenerated={(newPassword) => { setPassword(newPassword); setShowGenerator(false); }} />
-                     </div>
-                 )}
-                 <button type="submit" className="md:col-span-2 w-full px-4 py-2 font-bold text-white bg-green-600 rounded-md hover:bg-green-700">Add Item</button>
-             </form>
+                        {showGenerator && (
+                            <div className="md:col-span-2">
+                                <PasswordGenerator onPasswordGenerated={(newPassword) => { setPassword(newPassword); setShowGenerator(false); }} />
+                            </div>
+                        )}
+                        <button type="submit" className="md:col-span-2 w-full rounded-full bg-emerald-400/90 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-300">Add Item</button>
+                    </div>
+                </fieldset>
+            </form>
         </div>
     );
 }

@@ -31,16 +31,16 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
-            <div className="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-lg shadow-md">
-                <h1 className="text-2xl font-bold text-center">Login to SecureVault</h1>
+        <div className="flex min-h-screen items-center justify-center bg-slate-950 px-6 text-slate-100">
+            <div className="w-full max-w-md space-y-6 rounded-2xl border border-slate-800/80 bg-slate-900/60 p-8 shadow-2xl">
+                <h1 className="text-2xl font-semibold text-center text-slate-50">Login to SecureVault</h1>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-400">Email Address</label>
-                        <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full px-3 py-2 mt-1 text-white bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                        <label htmlFor="email" className="block text-sm font-medium text-slate-400">Email Address</label>
+                        <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="mt-1 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 py-2 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50" />
                     </div>
                     <div>
-                        <label htmlFor="password"  className="block text-sm font-medium text-gray-400">Password</label>
+                        <label htmlFor="password"  className="block text-sm font-medium text-slate-400">Password</label>
                         <div className="relative">
                             <input
                                 id="password"
@@ -48,18 +48,18 @@ export default function LoginPage() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="w-full px-3 py-2 mt-1 text-white bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="mt-1 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 py-2 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"
                             />
-                            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 px-3 flex items-center text-sm text-gray-400 hover:text-white">
+                            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 px-3 flex items-center text-sm text-slate-400 hover:text-slate-100">
                                 {showPassword ? 'Hide' : 'Show'}
                             </button>
                         </div>
                     </div>
-                    <button type="submit" className="w-full px-4 py-2 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500">Login</button>
+                    <button type="submit" className="w-full rounded-full bg-emerald-400/90 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-300">Login</button>
                 </form>
-                <p className="text-sm text-center text-gray-400">
+                <p className="text-sm text-center text-slate-400">
                     Don&#39;t have an account?{' '}
-                    <Link href="/register" className="font-medium text-blue-400 hover:underline">Register</Link>
+                    <Link href="/register" className="font-medium text-emerald-300 hover:text-emerald-200">Register</Link>
                 </p>
             </div>
         </div>

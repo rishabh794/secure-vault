@@ -65,37 +65,39 @@ export default function ImportPage() {
 
     return (
         <ProtectedRoute>
-            <div className="bg-gray-900 text-white min-h-screen p-8">
-                <h1 className="text-3xl font-bold mb-6">Import Vault</h1>
-                <div className="bg-gray-800 rounded-lg shadow-md p-6 max-w-lg mx-auto">
-                    <h2 className="text-xl font-semibold mb-2">Restore from Backup</h2>
-                    <p className="text-gray-400 mb-4">
+            <div className="min-h-screen bg-slate-950 px-6 py-8 text-slate-100">
+                <div className="mx-auto max-w-4xl">
+                    <h1 className="text-3xl font-semibold text-slate-50 mb-6">Import Vault</h1>
+                    <div className="max-w-lg rounded-2xl border border-slate-800/80 bg-slate-900/60 p-6 shadow-xl">
+                        <h2 className="text-xl font-semibold text-slate-50 mb-2">Restore from Backup</h2>
+                        <p className="text-slate-300 mb-4">
                         To migrate a vault, provide the backup file and the two required passwords.
-                    </p>
-                    <div className="flex flex-col space-y-4">
-                        <input
-                            type="file"
-                            accept=".txt"
-                            onChange={handleFileChange}
-                            className="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                        />
-                        <input
-                            type="password"
-                            placeholder="Enter Password for Backup File"
-                            value={backupPassword}
-                            onChange={(e) => setBackupPassword(e.target.value)}
-                            className="flex-grow px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"
-                        />
-                        <input
-                            type="password"
-                            placeholder="Enter Your Current Master Password"
-                            value={currentMasterPassword}
-                            onChange={(e) => setCurrentMasterPassword(e.target.value)}
-                            className="flex-grow px-3 py-2 text-white bg-gray-700 border border-gray-600 rounded-md"
-                        />
-                        <button onClick={handleImport} disabled={isImporting} className="w-full px-4 py-2 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-gray-500">
-                            {isImporting ? 'Importing...' : 'Import Vault'}
-                        </button>
+                        </p>
+                        <div className="flex flex-col space-y-4">
+                            <input
+                                type="file"
+                                accept=".txt"
+                                onChange={handleFileChange}
+                                className="w-full text-sm text-slate-400 file:mr-4 file:rounded-full file:border-0 file:bg-slate-800 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-slate-200 hover:file:bg-slate-700"
+                            />
+                            <input
+                                type="password"
+                                placeholder="Enter Password for Backup File"
+                                value={backupPassword}
+                                onChange={(e) => setBackupPassword(e.target.value)}
+                                className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"
+                            />
+                            <input
+                                type="password"
+                                placeholder="Enter Your Current Master Password"
+                                value={currentMasterPassword}
+                                onChange={(e) => setCurrentMasterPassword(e.target.value)}
+                                className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"
+                            />
+                            <button onClick={handleImport} disabled={isImporting} className="w-full rounded-full bg-emerald-400/90 px-4 py-2.5 text-sm font-semibold text-slate-950 hover:bg-emerald-300 disabled:bg-slate-700 disabled:text-slate-300">
+                                {isImporting ? 'Importing...' : 'Import Vault'}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

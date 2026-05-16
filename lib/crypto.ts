@@ -54,6 +54,9 @@ function decryptData<T>(encryptedString: string, masterPassword: string): T {
     });
 
     const jsonString = decrypted.toString(CryptoJS.enc.Utf8);
+    if (!jsonString) {
+        throw new Error('Invalid master password or corrupted data.');
+    }
     return JSON.parse(jsonString) as T;
 }
 

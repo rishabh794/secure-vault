@@ -59,25 +59,25 @@ export function EditModal({ item, masterPassword, onClose, onSave }: EditModalPr
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-            <div className="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-lg">
-                <h2 className="text-xl font-semibold mb-4">Edit Item</h2>
+        <div className="fixed inset-0 bg-slate-950/80 flex items-center justify-center z-50">
+            <div className="w-full max-w-lg rounded-2xl border border-slate-800/80 bg-slate-900/70 p-6 shadow-2xl">
+                <h2 className="text-xl font-semibold text-slate-50 mb-4">Edit Item</h2>
                 <form onSubmit={handleSave} className="space-y-4">
-                     <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Title" required className="w-full px-3 py-2 text-white bg-gray-700 rounded-md"/>
-                     <input value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" required className="w-full px-3 py-2 text-white bg-gray-700 rounded-md"/>
-                     <input type="text" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required className="w-full px-3 py-2 text-white bg-gray-700 rounded-md"/>
-                     <input value={url} onChange={e => setUrl(e.target.value)} placeholder="URL (optional)" className="w-full px-3 py-2 text-white bg-gray-700 rounded-md"/>
-                     <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes (optional)" className="w-full px-3 py-2 text-white bg-gray-700 rounded-md h-24"></textarea>
+                     <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Title" required className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"/>
+                     <input value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" required className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"/>
+                     <input type="text" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"/>
+                     <input value={url} onChange={e => setUrl(e.target.value)} placeholder="URL (optional)" className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"/>
+                     <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes (optional)" className="min-h-[110px] w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 py-2 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"></textarea>
                      <input 
                         value={tags} 
                         onChange={e => setTags(e.target.value)} 
                         placeholder="Tags (comma-separated)" 
-                        className="w-full px-3 py-2 text-white bg-gray-700 rounded-md"
+                        className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"
                      />
                     
                     <div className="flex justify-end space-x-4">
-                        <button type="button" onClick={onClose} className="px-4 py-2 font-bold text-gray-300 bg-gray-600 rounded-md hover:bg-gray-500">Cancel</button>
-                        <button type="submit" className="px-4 py-2 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700">Save Changes</button>
+                        <button type="button" onClick={onClose} className="rounded-full border border-slate-700/70 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-slate-500">Cancel</button>
+                        <button type="submit" className="rounded-full bg-emerald-400/90 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-300">Save Changes</button>
                     </div>
                 </form>
             </div>

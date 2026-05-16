@@ -45,19 +45,19 @@ export function PasswordGenerator({ onPasswordGenerated }: PasswordGeneratorProp
     };
 
     return (
-        <div className="bg-gray-700 p-4 rounded-md space-y-4">
-            <div className="flex items-center bg-gray-800 p-2 rounded">
+        <div className="rounded-xl border border-slate-800/70 bg-slate-900/70 p-4 space-y-4">
+            <div className="flex items-center rounded-lg border border-slate-800/70 bg-slate-950/60 p-2">
                 <input
                     type="text"
                     value={password}
                     readOnly
-                    className="flex-grow bg-transparent text-white font-mono focus:outline-none"
+                    className="flex-grow bg-transparent text-slate-100 font-mono focus:outline-none"
                 />
-                <button onClick={handleCopy} className="ml-2 p-1 text-gray-400 hover:text-white">Copy</button>
+                <button onClick={handleCopy} className="ml-2 p-1 text-slate-400 hover:text-slate-100">Copy</button>
             </div>
             
             <div className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between text-sm text-slate-300">
                     <label>Length: {length}</label>
                     <input
                         type="range"
@@ -68,7 +68,7 @@ export function PasswordGenerator({ onPasswordGenerated }: PasswordGeneratorProp
                         className="w-48"
                     />
                 </div>
-                <div className="flex items-center space-x-4">
+                <div className="flex flex-wrap items-center gap-4 text-sm text-slate-300">
                     <label><input type="checkbox" checked={includeLowerCase} onChange={() => setIncludeLowerCase(!includeLowerCase)} /> Lowercase</label>
                     <label><input type="checkbox" checked={includeUppercase} onChange={() => setIncludeUppercase(!includeUppercase)} /> Uppercase</label>
                     <label><input type="checkbox" checked={includeNumbers} onChange={() => setIncludeNumbers(!includeNumbers)} /> Numbers</label>
@@ -77,8 +77,8 @@ export function PasswordGenerator({ onPasswordGenerated }: PasswordGeneratorProp
             </div>
 
             <div className="flex space-x-2">
-                 <button onClick={generatePassword} type="button" className="w-full px-4 py-2 font-bold text-white bg-gray-600 rounded-md hover:bg-gray-500">Generate New</button>
-                <button onClick={() => onPasswordGenerated(password)} className="w-full px-4 py-2 font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700">Use Password</button>
+                 <button onClick={generatePassword} type="button" className="w-full rounded-full border border-slate-700/70 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-slate-500">Generate New</button>
+                <button onClick={() => onPasswordGenerated(password)} className="w-full rounded-full bg-emerald-400/90 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-300">Use Password</button>
             </div>
         </div>
     );

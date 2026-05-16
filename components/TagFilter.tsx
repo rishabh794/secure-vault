@@ -9,10 +9,10 @@ interface TagFilterProps {
 export function TagFilter({ allTags, activeTag, onTagSelect }: TagFilterProps) {
     return (
         <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className="text-sm font-semibold text-gray-400">Filter by Tag:</span>
+            <span className="text-sm font-semibold text-slate-400">Filter by Tag:</span>
             <button 
                 onClick={() => onTagSelect(null)}
-                className={`text-xs font-semibold px-2 py-1 rounded-full ${!activeTag ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
+                className={`text-xs font-semibold px-3 py-1 rounded-full ${!activeTag ? 'bg-emerald-400 text-slate-950' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
             >
                 All
             </button>
@@ -20,7 +20,7 @@ export function TagFilter({ allTags, activeTag, onTagSelect }: TagFilterProps) {
                 <button 
                     key={tag}
                     onClick={() => onTagSelect(tag)}
-                    className={`text-xs font-semibold px-2 py-1 rounded-full ${activeTag === tag ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'}`}
+                    className={`text-xs font-semibold px-3 py-1 rounded-full ${activeTag === tag ? 'bg-emerald-400 text-slate-950' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
                 >
                     {tag}
                 </button>

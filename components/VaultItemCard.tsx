@@ -50,31 +50,31 @@ export function VaultItemCard({ decryptedData, item, onDeleted , onEdit}: VaultI
     };
 
     return (
-        <div className="bg-gray-800 rounded-lg shadow-md p-4">
-            <h3 className="font-bold text-lg mb-2">{decryptedData?.title || 'Encrypted Title'}</h3>
-            <button onClick={onEdit} className="text-sm text-blue-400 hover:underline pr-2">Edit</button>
-            <button onClick={handleDelete} className="text-sm text-red-400 hover:underline">Delete</button>
+        <div className="rounded-2xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg">
+            <h3 className="font-semibold text-lg text-slate-50 mb-2">{decryptedData?.title || 'Encrypted Title'}</h3>
+            <button onClick={onEdit} className="text-sm text-emerald-300 hover:text-emerald-200 pr-2">Edit</button>
+            <button onClick={handleDelete} className="text-sm text-rose-300 hover:text-rose-200">Delete</button>
             
             <div className="flex items-center justify-between mb-1">
-                <p className="text-gray-400 truncate">
+                <p className="text-slate-400 truncate">
                     <strong>Username:</strong> {decryptedData?.username || 'Encrypted'}
                 </p>
-                {decryptedData && <button onClick={() => handleCopy(decryptedData.username, 'Username')} className="text-sm text-blue-400 hover:underline ml-4">Copy</button>}
+                {decryptedData && <button onClick={() => handleCopy(decryptedData.username, 'Username')} className="text-sm text-emerald-300 hover:text-emerald-200 ml-4">Copy</button>}
             </div>
 
             <div className="flex items-center justify-between mb-1">
-                <p className="text-gray-400 truncate">
+                <p className="text-slate-400 truncate">
                     <strong>Password:</strong> {decryptedData?.password || 'Encrypted'}
                 </p>
-                {decryptedData && <button onClick={() => handleCopy(decryptedData.password || '', 'Password')} className="text-sm text-blue-400 hover:underline ml-4">Copy</button>}
+                {decryptedData && <button onClick={() => handleCopy(decryptedData.password || '', 'Password')} className="text-sm text-emerald-300 hover:text-emerald-200 ml-4">Copy</button>}
             </div>
             
-            {decryptedData?.url && <p className="text-gray-400 truncate"><strong>URL:</strong> {decryptedData.url}</p>}
-            {decryptedData?.notes && <p className="text-gray-400 mt-2"><strong>Notes:</strong> {decryptedData.notes}</p>}
+            {decryptedData?.url && <p className="text-slate-400 truncate"><strong>URL:</strong> {decryptedData.url}</p>}
+            {decryptedData?.notes && <p className="text-slate-400 mt-2"><strong>Notes:</strong> {decryptedData.notes}</p>}
             {item.tags && item.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-4">
                     {item.tags.map(tag => (
-                        <span key={tag} className="bg-gray-600 text-gray-300 text-xs font-semibold px-2 py-1 rounded-full">
+                        <span key={tag} className="bg-slate-800 text-slate-300 text-xs font-semibold px-3 py-1 rounded-full">
                             {tag}
                         </span>
                     ))}
