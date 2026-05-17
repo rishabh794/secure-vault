@@ -5,6 +5,7 @@ export interface IVaultItem extends Document {
   userId: IUser['_id'];
   encryptedData: string;
   tags: string[];
+  encryptionVersion: number;
 }
 
 const VaultItemSchema: Schema = new Schema({
@@ -20,6 +21,10 @@ const VaultItemSchema: Schema = new Schema({
   tags: {
     type: [String],
     default: [], 
+  },
+  encryptionVersion: {
+    type: Number,
+    default: 1,
   },
 }, { timestamps: true });
 

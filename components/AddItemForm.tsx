@@ -2,16 +2,16 @@
 
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { encryptData } from '@/lib/crypto';
+import { encryptWithKey, VAULT_ITEM_ENCRYPTION_VERSION } from '@/lib/crypto';
 import { PasswordGenerator } from './PasswordGenerator';
 
 interface AddItemFormProps {
-    masterPassword: string;
+    vaultKey: string | null;
     onItemAdded: () => void;
     canAdd: boolean;
 }
 
-export function AddItemForm({ masterPassword, onItemAdded, canAdd }: AddItemFormProps) {
+export function AddItemForm({ vaultKey, onItemAdded, canAdd }: AddItemFormProps) {
     const [title, setTitle] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -25,13 +25,13 @@ export function AddItemForm({ masterPassword, onItemAdded, canAdd }: AddItemForm
         if (!canAdd) {
             return toast.error("Unlock your vault to add items.");
         }
-        if (!masterPassword) {
-            return toast.error("Please enter your master password to add an item.");
+        if (!vaultKey) {
+            return toast.error("Unlock your vault to add items.");
         }
         
         const token = sessionStorage.getItem('token');
         const newItem = { title, username, password, url, notes };
-        const encryptedData = encryptData(newItem, masterPassword);
+        const encryptedData = encryptWithKey(newItem, vaultKey);
         const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
 
         const res = await fetch('/api/vault', {
@@ -40,7 +40,7 @@ export function AddItemForm({ masterPassword, onItemAdded, canAdd }: AddItemForm
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ encryptedData , tags: tagsArray })
+            body: JSON.stringify({ encryptedData, tags: tagsArray, encryptionVersion: VAULT_ITEM_ENCRYPTION_VERSION })
         });
         
         if (res.ok) {

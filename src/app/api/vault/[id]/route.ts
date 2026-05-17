@@ -41,7 +41,7 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ id:
         }
 
         const { id: itemId } = await context.params;
-        const { encryptedData , tags } = await request.json();
+        const { encryptedData, tags, encryptionVersion } = await request.json();
 
         const itemToUpdate = await VaultItem.findById(itemId);
 
@@ -53,8 +53,15 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ id:
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
-        itemToUpdate.encryptedData = encryptedData;
-        itemToUpdate.tags = tags || [];
+        if (encryptedData) {
+            itemToUpdate.encryptedData = encryptedData;
+        }
+        if (Array.isArray(tags)) {
+            itemToUpdate.tags = tags;
+        }
+        if (typeof encryptionVersion === 'number') {
+            itemToUpdate.encryptionVersion = encryptionVersion;
+        }
         await itemToUpdate.save();
 
         return NextResponse.json({ message: "Item updated successfully" }, { status: 200 });
