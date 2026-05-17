@@ -153,7 +153,7 @@ export default function DashboardPage() {
     
     return (
         <ProtectedRoute>
-            <div className="min-h-screen bg-slate-950 text-slate-100 px-4 py-8 sm:px-6">
+            <div className="min-h-screen bg-slate-950 text-slate-100 px-4 py-8 sm:px-6 overflow-x-hidden">
                 <div className="mx-auto w-full max-w-6xl">
                     <h1 className="text-3xl font-semibold text-slate-50 mb-6">Dashboard</h1>
 
@@ -188,7 +188,7 @@ export default function DashboardPage() {
                             />
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="min-w-0 space-y-4">
                             <SearchInput searchTerm={searchTerm} onSearchChange={setSearchTerm} />
                             <TagFilter 
                                     allTags={allTags}

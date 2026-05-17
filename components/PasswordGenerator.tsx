@@ -51,13 +51,13 @@ export function PasswordGenerator({ onPasswordGenerated }: PasswordGeneratorProp
                     type="text"
                     value={password}
                     readOnly
-                    className="flex-grow bg-transparent text-slate-100 font-mono focus:outline-none"
+                    className="min-w-0 flex-grow bg-transparent font-mono text-slate-100 focus:outline-none"
                 />
                 <button onClick={handleCopy} className="ml-2 p-1 text-slate-400 hover:text-slate-100">Copy</button>
             </div>
             
             <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm text-slate-300">
+                <div className="flex flex-col gap-2 text-sm text-slate-300 sm:flex-row sm:items-center sm:justify-between">
                     <label>Length: {length}</label>
                     <input
                         type="range"
@@ -65,7 +65,7 @@ export function PasswordGenerator({ onPasswordGenerated }: PasswordGeneratorProp
                         max="64"
                         value={length}
                         onChange={(e) => setLength(Number(e.target.value))}
-                        className="w-48"
+                        className="w-full sm:w-48"
                     />
                 </div>
                 <div className="flex flex-wrap items-center gap-4 text-sm text-slate-300">
