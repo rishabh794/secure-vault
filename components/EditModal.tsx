@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { decryptWithKey, encryptWithKey, VAULT_ITEM_ENCRYPTION_VERSION } from "@/lib/crypto";
+import { decryptWithKey, encryptWithKey } from "@/lib/crypto";
 import toast from "react-hot-toast";
 
 type VaultItem = { title: string; username: string; password?: string; url?: string; notes?: string };
 
 interface EditModalProps {
-    item: { _id: string; encryptedData: string; tags?: string[]; encryptionVersion?: number };
+    item: { _id: string; encryptedData: string; tags?: string[] };
     vaultKey: string | null;
     onClose: () => void;
     onSave: () => void;
@@ -28,11 +28,7 @@ export function EditModal({ item, vaultKey, onClose, onSave }: EditModalProps) {
                 onClose();
                 return;
             }
-            if (item.encryptionVersion !== VAULT_ITEM_ENCRYPTION_VERSION) {
-                toast.error("This item uses legacy encryption. Please unlock the vault to migrate it.");
-                onClose();
-                return;
-            }
+
             const decrypted = decryptWithKey<VaultItem>(item.encryptedData, vaultKey);
             setTitle(decrypted.title);
             setUsername(decrypted.username);
@@ -60,7 +56,7 @@ export function EditModal({ item, vaultKey, onClose, onSave }: EditModalProps) {
         const res = await fetch(`/api/vault/${item._id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ encryptedData, tags: tagsArray, encryptionVersion: VAULT_ITEM_ENCRYPTION_VERSION }),
+            body: JSON.stringify({ encryptedData, tags: tagsArray }),
         });
 
         if (res.ok) {

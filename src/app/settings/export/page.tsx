@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
-import { decryptData, decryptWithKey, encryptData, VAULT_ITEM_ENCRYPTION_VERSION } from '@/lib/crypto';
+import { decryptData, decryptWithKey, encryptData } from '@/lib/crypto';
 import toast from 'react-hot-toast';
 
 type VaultItem = { title: string; username: string; password?: string; url?: string; notes?: string; tags?: string[] };
@@ -10,7 +10,6 @@ type VaultItem = { title: string; username: string; password?: string; url?: str
 interface VaultDbItem {
     encryptedData: string;
     tags?: string[];
-    encryptionVersion?: number;
 }
 
 export default function ExportPage() {
@@ -66,9 +65,7 @@ export default function ExportPage() {
 
         try {
             const plaintextItems = data.items.map((item: VaultDbItem) => {
-                const decrypted = item.encryptionVersion === VAULT_ITEM_ENCRYPTION_VERSION
-                    ? decryptWithKey<VaultItem>(item.encryptedData, vaultKey)
-                    : decryptData<VaultItem>(item.encryptedData, masterPassword);
+                const decrypted = decryptWithKey<VaultItem>(item.encryptedData, vaultKey);
                 return { ...decrypted, tags: item.tags };
             });
 

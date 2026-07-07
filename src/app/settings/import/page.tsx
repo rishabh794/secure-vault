@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
-import { decryptData, encryptWithKey, VAULT_ITEM_ENCRYPTION_VERSION } from '@/lib/crypto';
+import { decryptData, encryptWithKey } from '@/lib/crypto';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
@@ -61,8 +61,7 @@ export default function ImportPage() {
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                         body: JSON.stringify({
                             encryptedData: newEncryptedData,
-                            tags: item.tags || [],
-                            encryptionVersion: VAULT_ITEM_ENCRYPTION_VERSION
+                            tags: item.tags || []
                         }),
                     });
 

@@ -3,7 +3,6 @@ import CryptoJS from 'crypto-js';
 const SALT_SIZE = 128 / 8; 
 const KEY_SIZE = 256 / 32; 
 const ITERATIONS = 10000; 
-const VAULT_ITEM_ENCRYPTION_VERSION = 2;
 
 /**
  * Encrypts data object using a master password.
@@ -111,6 +110,5 @@ export {
     decryptData,
     generateVaultKey,
     encryptWithKey,
-    decryptWithKey,
-    VAULT_ITEM_ENCRYPTION_VERSION
+    decryptWithKey
 };

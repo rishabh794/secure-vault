@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { encryptedData, tags, encryptionVersion } = await request.json();
+        const { encryptedData, tags } = await request.json();
         if (!encryptedData) {
             return NextResponse.json({ error: "Encrypted data is required" }, { status: 400 });
         }
@@ -20,7 +20,6 @@ export async function POST(request: NextRequest) {
             userId,
             encryptedData,
             tags: tags || [],
-            encryptionVersion: typeof encryptionVersion === 'number' ? encryptionVersion : 1,
         });
 
         const savedItem = await newVaultItem.save();

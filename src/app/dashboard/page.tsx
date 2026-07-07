@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect , useMemo } from 'react';
-import { decryptData, decryptWithKey, encryptWithKey, VAULT_ITEM_ENCRYPTION_VERSION } from '@/lib/crypto';
+import { decryptData, decryptWithKey, encryptWithKey } from '@/lib/crypto';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import toast from 'react-hot-toast';
 import { AddItemForm } from '@/components/AddItemForm'
@@ -22,7 +22,6 @@ type VaultDbItem = {
     _id: string;
     encryptedData: string;
     tags: string[];
-    encryptionVersion?: number;
 };
 
 export default function DashboardPage() {
@@ -88,12 +87,10 @@ export default function DashboardPage() {
             if (options?.decrypt && activeVaultKey) {
                 const decrypted: Record<string, VaultItem> = {};
                 fetchedItems.forEach(item => {
-                    if (item.encryptionVersion === VAULT_ITEM_ENCRYPTION_VERSION) {
-                        try {
-                            decrypted[item._id] = decryptWithKey<VaultItem>(item.encryptedData, activeVaultKey);
-                        } catch {
-                            // Ignore items that cannot be decrypted with the current vault key.
-                        }
+                    try {
+                        decrypted[item._id] = decryptWithKey<VaultItem>(item.encryptedData, activeVaultKey);
+                    } catch {
+                        // Ignore items that cannot be decrypted with the current vault key.
                     }
                 });
                 setDecryptedItems(decrypted);
@@ -108,45 +105,6 @@ export default function DashboardPage() {
         fetchMasterPasswordStatus();
     }, []);
 
-    const migrateLegacyItems = async (
-        legacyItems: Array<{ id: string; data: VaultItem; tags: string[] }>,
-        key: string
-    ) => {
-        const token = sessionStorage.getItem('token');
-        if (!token || legacyItems.length === 0) {
-            return;
-        }
-
-        const results = await Promise.allSettled(
-            legacyItems.map(async (legacyItem) => {
-                const encryptedData = encryptWithKey(legacyItem.data, key);
-                return fetch(`/api/vault/${legacyItem.id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        encryptedData,
-                        tags: legacyItem.tags,
-                        encryptionVersion: VAULT_ITEM_ENCRYPTION_VERSION
-                    })
-                });
-            })
-        );
-
-        const failed = results.filter(result =>
-            result.status === 'rejected' || (result.status === 'fulfilled' && !result.value.ok)
-        );
-
-        if (failed.length > 0) {
-            toast("Some legacy items could not be migrated. They will remain locked.");
-        } else {
-            toast.success("Legacy items upgraded to the new encryption.");
-        }
-
-        await fetchItems({ vaultKey: key, decrypt: true });
-    };
 
     const handleUnlockVault = async () => {
         if (!masterPassword) {
@@ -195,17 +153,10 @@ export default function DashboardPage() {
 
             const decrypted: Record<string, VaultItem> = {};
             const failedItemIds: string[] = [];
-            const legacyItems: Array<{ id: string; data: VaultItem; tags: string[] }> = [];
 
             items.forEach(item => {
                 try {
-                    if (item.encryptionVersion === VAULT_ITEM_ENCRYPTION_VERSION) {
-                        decrypted[item._id] = decryptWithKey<VaultItem>(item.encryptedData, vaultKey);
-                    } else {
-                        const legacyData = decryptData<VaultItem>(item.encryptedData, masterPassword);
-                        decrypted[item._id] = legacyData;
-                        legacyItems.push({ id: item._id, data: legacyData, tags: item.tags || [] });
-                    }
+                    decrypted[item._id] = decryptWithKey<VaultItem>(item.encryptedData, vaultKey);
                 } catch {
                     failedItemIds.push(item._id);
                 }
@@ -223,9 +174,6 @@ export default function DashboardPage() {
             setDecryptedItems(decrypted);
             setIsVaultUnlocked(true);
 
-            if (legacyItems.length > 0) {
-                await migrateLegacyItems(legacyItems, vaultKey);
-            }
 
             if (failedItemIds.length > 0) {
                 toast("Vault unlocked, but some items could not be decrypted.");

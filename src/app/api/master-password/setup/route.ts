@@ -15,10 +15,6 @@ const strongMasterPasswordSchema = z.object({
         )
 });
 
-const legacyMasterPasswordSchema = z.object({
-    masterPassword: z.string()
-        .min(1, { message: "Master password is required" })
-});
 
 export async function POST(request: NextRequest) {
     await dbConnect();
@@ -29,9 +25,7 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
-        const hasLegacyItems = await VaultItem.exists({ userId });
-        const schema = hasLegacyItems ? legacyMasterPasswordSchema : strongMasterPasswordSchema;
-        const validation = schema.safeParse(body);
+        const validation = strongMasterPasswordSchema.safeParse(body);
         if (!validation.success) {
             return NextResponse.json(
                 { error: validation.error.issues[0].message },
@@ -55,7 +49,6 @@ export async function POST(request: NextRequest) {
 
         user.masterPasswordHash = masterPasswordHash;
         user.vaultKeyEncrypted = vaultKeyEncrypted;
-        user.vaultKeyVersion = 1;
         await user.save();
 
         return NextResponse.json({ success: true, vaultKeyEncrypted }, { status: 201 });

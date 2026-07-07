@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { encryptWithKey, VAULT_ITEM_ENCRYPTION_VERSION } from '@/lib/crypto';
+import { encryptWithKey } from '@/lib/crypto';
 import { PasswordGenerator } from './PasswordGenerator';
 
 interface AddItemFormProps {
@@ -40,7 +40,7 @@ export function AddItemForm({ vaultKey, onItemAdded, canAdd }: AddItemFormProps)
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ encryptedData, tags: tagsArray, encryptionVersion: VAULT_ITEM_ENCRYPTION_VERSION })
+            body: JSON.stringify({ encryptedData, tags: tagsArray })
         });
         
         if (res.ok) {
