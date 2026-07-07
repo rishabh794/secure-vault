@@ -5,6 +5,8 @@ export interface IUser extends Document {
   password_hash: string;
   isTwoFactorEnabled: boolean;
   twoFactorSecret: string;
+  masterPasswordHash?: string;
+  vaultKeyEncrypted?: string;
 }
 
 const UserSchema: Schema = new Schema({
@@ -22,6 +24,12 @@ const UserSchema: Schema = new Schema({
     default: false,
   },
   twoFactorSecret: {
+    type: String,
+  },
+  masterPasswordHash: {
+    type: String,
+  },
+  vaultKeyEncrypted: {
     type: String,
   },
 }, { timestamps: true }); 

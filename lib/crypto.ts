@@ -60,4 +60,55 @@ function decryptData<T>(encryptedString: string, masterPassword: string): T {
     return JSON.parse(jsonString) as T;
 }
 
-export {encryptData , decryptData};
+/**
+ * Generates a random 256-bit vault key encoded as hex.
+ */
+function generateVaultKey(): string {
+    return CryptoJS.lib.WordArray.random(32).toString();
+}
+
+/**
+ * Encrypts data with a raw vault key (hex), storing iv:ciphertext.
+ */
+function encryptWithKey(data: object, vaultKeyHex: string): string {
+    const key = CryptoJS.enc.Hex.parse(vaultKeyHex);
+    const iv = CryptoJS.lib.WordArray.random(128 / 8);
+    const jsonString = JSON.stringify(data);
+
+    const encrypted = CryptoJS.AES.encrypt(jsonString, key, {
+        iv: iv,
+        padding: CryptoJS.pad.Pkcs7,
+        mode: CryptoJS.mode.CBC
+    });
+
+    return iv.toString() + encrypted.toString();
+}
+
+/**
+ * Decrypts data with a raw vault key (hex) from iv:ciphertext.
+ */
+function decryptWithKey<T>(encryptedString: string, vaultKeyHex: string): T {
+    const iv = CryptoJS.enc.Hex.parse(encryptedString.substring(0, 32));
+    const encrypted = encryptedString.substring(32);
+    const key = CryptoJS.enc.Hex.parse(vaultKeyHex);
+
+    const decrypted = CryptoJS.AES.decrypt(encrypted, key, {
+        iv: iv,
+        padding: CryptoJS.pad.Pkcs7,
+        mode: CryptoJS.mode.CBC
+    });
+
+    const jsonString = decrypted.toString(CryptoJS.enc.Utf8);
+    if (!jsonString) {
+        throw new Error('Invalid vault key or corrupted data.');
+    }
+    return JSON.parse(jsonString) as T;
+}
+
+export {
+    encryptData,
+    decryptData,
+    generateVaultKey,
+    encryptWithKey,
+    decryptWithKey
+};

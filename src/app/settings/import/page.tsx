@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
-import { encryptData, decryptData } from '@/lib/crypto';
+import { decryptData, encryptWithKey } from '@/lib/crypto';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
@@ -37,14 +37,32 @@ export default function ImportPage() {
                 if (!Array.isArray(plaintextItems)) { throw new Error("Invalid backup file format."); }
 
                 const token = sessionStorage.getItem('token');
+
+                const verifyRes = await fetch('/api/master-password/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ masterPassword: currentMasterPassword })
+                });
+
+                if (!verifyRes.ok) {
+                    const data = await verifyRes.json();
+                    toast.error(data.error || "Invalid master password.");
+                    return;
+                }
+
+                const verifyData = await verifyRes.json();
+                const { vaultKey } = decryptData<{ vaultKey: string }>(verifyData.vaultKeyEncrypted, currentMasterPassword);
                 
                 for (const item of plaintextItems) {
-                    const newEncryptedData = encryptData(item, currentMasterPassword);
+                    const newEncryptedData = encryptWithKey(item, vaultKey);
                     
                     const res = await fetch('/api/vault', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                        body: JSON.stringify({ encryptedData: newEncryptedData, tags: item.tags || [] }),
+                        body: JSON.stringify({
+                            encryptedData: newEncryptedData,
+                            tags: item.tags || []
+                        }),
                     });
 
                     if (!res.ok) { throw new Error("An error occurred while saving an item."); }
@@ -89,7 +107,7 @@ export default function ImportPage() {
                             />
                             <input
                                 type="password"
-                                placeholder="Enter Your Current Master Password"
+                                placeholder="Enter Master Password to unlock"
                                 value={currentMasterPassword}
                                 onChange={(e) => setCurrentMasterPassword(e.target.value)}
                                 className="h-11 w-full rounded-lg border border-slate-700/70 bg-slate-900/70 px-3 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400/50"

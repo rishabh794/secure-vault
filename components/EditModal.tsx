@@ -1,19 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { encryptData, decryptData } from "@/lib/crypto";
+import { decryptWithKey, encryptWithKey } from "@/lib/crypto";
 import toast from "react-hot-toast";
 
 type VaultItem = { title: string; username: string; password?: string; url?: string; notes?: string };
 
 interface EditModalProps {
-    item: { _id: string; encryptedData: string; tags?: string[]};
-    masterPassword: string;
+    item: { _id: string; encryptedData: string; tags?: string[] };
+    vaultKey: string | null;
     onClose: () => void;
     onSave: () => void;
 }
 
-export function EditModal({ item, masterPassword, onClose, onSave }: EditModalProps) {
+export function EditModal({ item, vaultKey, onClose, onSave }: EditModalProps) {
     const [title, setTitle] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -23,7 +23,13 @@ export function EditModal({ item, masterPassword, onClose, onSave }: EditModalPr
 
     useEffect(() => {
         try {
-            const decrypted = decryptData<VaultItem>(item.encryptedData, masterPassword);
+            if (!vaultKey) {
+                toast.error("Unlock your vault to edit items.");
+                onClose();
+                return;
+            }
+
+            const decrypted = decryptWithKey<VaultItem>(item.encryptedData, vaultKey);
             setTitle(decrypted.title);
             setUsername(decrypted.username);
             setPassword(decrypted.password || '');
@@ -34,19 +40,23 @@ export function EditModal({ item, masterPassword, onClose, onSave }: EditModalPr
             toast.error("Failed to decrypt item for editing.");
             onClose();
         }
-    }, [item, masterPassword, onClose]);
+    }, [item, vaultKey, onClose]);
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         const updatedItem = { title, username, password, url, notes };
-        const encryptedData = encryptData(updatedItem, masterPassword);
+        if (!vaultKey) {
+            toast.error("Unlock your vault to edit items.");
+            return;
+        }
+        const encryptedData = encryptWithKey(updatedItem, vaultKey);
         const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
 
         const token = sessionStorage.getItem('token');
         const res = await fetch(`/api/vault/${item._id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ encryptedData , tags: tagsArray }),
+            body: JSON.stringify({ encryptedData, tags: tagsArray }),
         });
 
         if (res.ok) {
